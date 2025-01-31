@@ -74,4 +74,3 @@ We are excited to have you contribute to the 100XGROW project! Please follow the
 We appreciate your contribution to 100XGROW and look forward to your pull requests!
 
 Happy coding! 🚀
-```
