@@ -123,7 +123,7 @@ function MagicATS() {
                     <p>Loading......</p>
                 }
                 <h2 className="text-4xl font-semibold w-290 text-left">ATS Score & Feedback</h2>
-                <div className="flex gap-16">
+                <div className="flex flex-wrap justify-center items-start gap-16">
                     <div className="h-76 w-137 bg-[#1e2939] p-1">
                         <div className="w-full h-full rounded-lg bg-[#030712] p-4 text-left flex flex-col justify-between">
                             <p className="text-lg font-semibold">ATS</p>
@@ -157,9 +157,10 @@ function MagicATS() {
                             </div>
                         </div>
                     </div>
+
                     <div className="min-h-76 h-auto w-137 bg-[#1e2939] p-1">
                         <div className="w-full h-full rounded-lg bg-[#030712] p-4 text-left flex flex-col justify-between">
-                            <p className="text-lg font-semibold">Feedback</p>
+                            <p className="text-lg font-semibold mb-4">Points to Improve</p>
                             <div className="w-full min-h-56 h-auto flex flex-col items-start gap-2">
                                 {pointFeedback?.length > 0 ? (
                                     <>
@@ -169,8 +170,38 @@ function MagicATS() {
                                         <p><strong>4.</strong> {pointFeedback[3]}</p>
                                     </>
                                 ) : (
-                                    <p>No feedback available</p>
+                                    <p>No points available  right now</p>
                                 )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="min-h-76 h-auto w-137 bg-[#1e2939] p-1">
+                        <div className="w-full h-full rounded-lg bg-[#030712] p-4 text-left flex flex-col justify-between">
+                            <p className="text-lg font-semibold mb-4">Feedback</p>
+                            <div className="w-full min-h-56 flex flex-col items-start gap-2">
+                                {feedback ? (
+                                    <>
+                                        <p>{feedback}</p>
+                                    </>
+                                ) : (
+                                    <p>No Feedback available  right now</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="min-h-76 h-auto w-137 bg-[#1e2939] p-1">
+                        <div className="w-full h-full rounded-lg bg-[#030712] p-4 text-left flex flex-col justify-between">
+                            <p className="text-lg font-semibold mb-4">Missing Keywords</p>
+                            <div className="w-full min-h-56 flex flex-wrap gap-3">
+                            {missingKeywords?.length > 0 ? (
+                                missingKeywords.map((keyword, index) => (
+                                    <p className="p-1 h-fit w-fit bg-[#1e2939] rounded-sm" key={index}>{keyword}</p> // Use {} to dynamically insert `keyword`
+                                ))
+                            ) : (
+                                <p>No Missing Keywords available right now</p>
+                            )}
                             </div>
                         </div>
                     </div>
