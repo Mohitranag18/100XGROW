@@ -20,5 +20,6 @@ from django.views.generic import TemplateView #for temp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include('base.urls'))
+    path('api/',include('base.urls')),
+    path('api/',include('magicATS.urls'))
 ]
