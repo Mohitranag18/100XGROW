@@ -94,3 +94,16 @@ export const get_user_profile_info = async (username) => {
     }
 };
 
+// api for magicATS
+export const analyze_resume_api = async (resume, job_role) => {
+    try {
+        const response = await axios.post(`${BASE_URL}analyze/`, { resume, job_role }, {headers: {
+            "Content-Type": "multipart/form-data",},
+        withCredentials: true });
+        return response.data; // Ensure only relevant data is returned
+    } catch (error) {
+        console.error("API Error:", error);
+        return { error: error.message }; // Return a safe fallback object
+    }
+};
+

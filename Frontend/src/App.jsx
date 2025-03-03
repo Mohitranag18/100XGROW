@@ -24,51 +24,51 @@ function App() {
         <Header />
         <Routes>
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <UserProfile />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/profile"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <Home />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <BuildResume />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/buildresume"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <RateMyResume />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/ratemyresume"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <MagicATS />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/magicats"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <FindJob />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/findjob"
           />
           <Route element={
-              // <PrivateRoute>
+              <PrivateRoute>
                 <Template />
-              // </PrivateRoute>
+              </PrivateRoute>
             }
             path="/buildresume/:templateName"
           />

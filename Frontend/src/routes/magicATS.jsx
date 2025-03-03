@@ -1,10 +1,37 @@
 import { useState } from "react";
 import { UploadCloud } from "lucide-react";
+import { analyze_resume_api } from "../api/endpoints";
 
 function MagicATS() {
 
+    const [loading, setLoading] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
     const [jobRole, setJobRole] = useState("");
+    const [atsScore, setAtsScore] = useState(0)
+    const [keywordMatchScore, setKeywordMatchScore] = useState(0)
+    const [relevanceWorkScore, setRelevanceWorkScore] = useState(0)
+    const [feedback, setFeedback] = useState("")
+    const [pointFeedback, setPointFeedback] = useState([])
+    const [missingKeywords, setMissingKeywords] = useState([])
+
+    const analyzeResume = async () => {
+        setLoading(true)
+        try{
+            const response = await analyze_resume_api(selectedFile, jobRole)
+            console.log(response)
+            setAtsScore(response.ats_score)
+            setKeywordMatchScore(response.keywords_matching_score)
+            setRelevanceWorkScore(response.relevance_work_experience_score)
+            setFeedback(response.detailed_feedback)
+            setPointFeedback(response.short_feedback)
+            setMissingKeywords(response.missing_keywords)
+        }catch{
+            alert('error in analyzing resume')
+        } finally{
+            setLoading(false)
+        }
+    }
+    
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -79,6 +106,7 @@ function MagicATS() {
                         </div>
 
                         <button
+                            onClick={analyzeResume}
                             className="mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition"
                             disabled={!selectedFile || !jobRole}
                         >
@@ -90,6 +118,10 @@ function MagicATS() {
 
             {/* panel 3 */}
             <div className="w-full flex flex-col justify-center items-center text-center gap-8 p-6 py-16 border-b-2 border-[#1e2939]">
+                {
+                    loading && 
+                    <p>Loading......</p>
+                }
                 <h2 className="text-4xl font-semibold w-290 text-left">ATS Score & Feedback</h2>
                 <div className="flex gap-16">
                     <div className="h-76 w-137 bg-[#1e2939] p-1">
@@ -99,7 +131,7 @@ function MagicATS() {
                                 <div className="w-[48%] h-56 bg-[#1e2939] rounded-md flex justify-center items-center">
                                     <div className="h-40 w-40 bg-gray-200 rounded-full flex justify-center items-center">
                                         <div className="h-32 w-32 bg-[#1e2939] rounded-full flex flex-col justify-center items-center">
-                                            <p className="font-bold">0/100</p>
+                                            <p className="font-bold">{atsScore}/100</p>
                                             <p>Your ATS Score</p>
                                         </div>
                                     </div>
@@ -108,7 +140,7 @@ function MagicATS() {
                                     <div className="h-27 bg-[#1e2939] rounded-md flex items-center gap-2 px-2">
                                         <div className="h-22 w-22 bg-gray-200 rounded-full flex justify-center items-center">
                                             <div className="h-18 w-18 bg-[#1e2939] rounded-full flex flex-col justify-center items-center">
-                                                <p className="font-bold">0/100</p>
+                                                <p className="font-bold">{keywordMatchScore}/100</p>
                                             </div>
                                         </div>
                                         <p className="w-32 h-full flex justify-center items-center">Keywords Matching Score</p>
@@ -116,7 +148,7 @@ function MagicATS() {
                                     <div className="h-27 bg-[#1e2939] rounded-md flex items-center gap-2 px-2">
                                         <div className="h-22 w-22 bg-gray-200 rounded-full flex justify-center items-center">
                                             <div className="h-18 w-18 bg-[#1e2939] rounded-full flex flex-col justify-center items-center">
-                                                <p className="font-bold">0/100</p>
+                                                <p className="font-bold">{relevanceWorkScore}/100</p>
                                             </div>
                                         </div>
                                         <p className="w-32 h-full flex justify-center items-center">Relevance Work Experience Score</p>
@@ -125,14 +157,20 @@ function MagicATS() {
                             </div>
                         </div>
                     </div>
-                    <div className="h-76 w-137 bg-[#1e2939] p-1">
+                    <div className="min-h-76 h-auto w-137 bg-[#1e2939] p-1">
                         <div className="w-full h-full rounded-lg bg-[#030712] p-4 text-left flex flex-col justify-between">
                             <p className="text-lg font-semibold">Feedback</p>
-                            <div className="w-full h-56 flex flex-col items-start gap-8">
-                                <p>1.</p>
-                                <p>2.</p>
-                                <p>3.</p>
-                                <p>4.</p>
+                            <div className="w-full min-h-56 h-auto flex flex-col items-start gap-2">
+                                {pointFeedback?.length > 0 ? (
+                                    <>
+                                        <p><strong>1.</strong> {pointFeedback[0]}</p>
+                                        <p><strong>2.</strong> {pointFeedback[1]}</p>
+                                        <p><strong>3.</strong> {pointFeedback[2]}</p>
+                                        <p><strong>4.</strong> {pointFeedback[3]}</p>
+                                    </>
+                                ) : (
+                                    <p>No feedback available</p>
+                                )}
                             </div>
                         </div>
                     </div>

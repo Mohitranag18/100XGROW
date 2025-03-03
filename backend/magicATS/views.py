@@ -27,7 +27,7 @@ def analyze_resume_with_ai(resume_text, job_role):
     3. **Keywords Matching Score** (0-100) based on the number of relevant keywords found in the resume.
     4. **Missing Keywords** (skills, technologies, tools) that should be included.
     5. **Detailed Feedback** with actionable suggestions for improvement.
-    6. **Short Feedback (3 points)** summarizing the top three most important improvement areas.
+    6. **Short Feedback (4 points)** summarizing the top three most important improvement areas.
 
     Return the response in JSON format:
     {{
@@ -39,7 +39,8 @@ def analyze_resume_with_ai(resume_text, job_role):
         "short_feedback": [
             "<point 1>",
             "<point 2>",
-            "<point 3>"
+            "<point 3>",
+            "<point 4>"
         ]
     }}
     """
