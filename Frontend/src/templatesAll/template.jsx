@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 function Template() {
@@ -18,6 +18,64 @@ function Template() {
     const [experience, setExperience] = useState([]);
     const [projects, setProjects] = useState([]);
     const [skills, setSkills] = useState([]);
+
+    useEffect(() => {
+        const savedName = localStorage.getItem('name');
+        const savedDescription = localStorage.getItem('description');
+        const savedContactNum = localStorage.getItem('contactNum');
+        const savedEmail = localStorage.getItem('email');
+        const savedAddress = localStorage.getItem('address');
+        const savedEducation = localStorage.getItem('education');
+        const savedExperience = localStorage.getItem('experience');
+        const savedProjects = localStorage.getItem('projects');
+        const savedSkills = localStorage.getItem('skills');
+
+        if (savedName) setName(savedName);
+        if (savedDescription) setDescription(savedDescription);
+        if (savedContactNum) setContactNum(savedContactNum);
+        if (savedEmail) setEmail(savedEmail);
+        if (savedAddress) setAddress(savedAddress);
+        if (savedEducation) setEducation(JSON.parse(savedEducation));
+        if (savedExperience) setExperience(JSON.parse(savedExperience));
+        if (savedProjects) setProjects(JSON.parse(savedProjects));
+        if (savedSkills) setSkills(JSON.parse(savedSkills));
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('name', name);
+    }, [name]);
+
+    useEffect(() => {
+        localStorage.setItem('description', description);
+    }, [description]);
+
+    useEffect(() => {
+        localStorage.setItem('contactNum', contactNum);
+    }, [contactNum]);
+
+    useEffect(() => {
+        localStorage.setItem('email', email);
+    }, [email]);
+
+    useEffect(() => {
+        localStorage.setItem('address', address);
+    }, [address]);
+
+    useEffect(() => {
+        localStorage.setItem('education', JSON.stringify(education));
+    }, [education]);
+
+    useEffect(() => {
+        localStorage.setItem('experience', JSON.stringify(experience));
+    }, [experience]);
+
+    useEffect(() => {
+        localStorage.setItem('projects', JSON.stringify(projects));
+    }, [projects]);
+
+    useEffect(() => {
+        localStorage.setItem('skills', JSON.stringify(skills));
+    }, [skills]);
 
     const handleEducationAdd = () => {
         setEducation([...education, { institute: '', startYear: '', endYear: '', course: '' }]);
