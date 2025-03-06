@@ -29,6 +29,7 @@ function MagicATS() {
             alert('error in analyzing resume')
         } finally{
             setLoading(false)
+            setSelectedFile(null)
         }
     }
     
@@ -77,7 +78,7 @@ function MagicATS() {
                             id="file-upload"
                             className="hidden"
                             onChange={handleFileChange}
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf"
                             />
                         </div>
                         {selectedFile && (

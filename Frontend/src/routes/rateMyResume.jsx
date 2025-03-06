@@ -1,10 +1,26 @@
 import { useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
+import { review_resume_create } from "../api/endpoints";
 
 function RateMyResume() {
+    const [loading, setLoading] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null);
     const [jobRole, setJobRole] = useState("");
+
+    const createResumeReviewPost = async () => {
+        setLoading(true)
+        try{
+            const response = await review_resume_create(selectedFile, jobRole)
+            alert("Resume Uploaded!");
+            console.log(response)
+        }catch{
+            alert('error in uploading resume')
+        } finally{
+            setLoading(false)
+            setSelectedFile(null)
+        }
+    }
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -78,12 +94,18 @@ function RateMyResume() {
                             </select>
                         </div>
 
-                        <button
-                            className="mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition"
-                            disabled={!selectedFile || !jobRole}
-                        >
-                            Upload Resume
-                        </button>
+                        {
+                            loading ?
+                            <p>loading....</p>
+                            :
+                            <button
+                                onClick={createResumeReviewPost}
+                                className="mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition"
+                                disabled={!selectedFile || !jobRole}
+                            >
+                                Upload Resume
+                            </button>
+                        }
                     </div>
                 </div>
             </div>

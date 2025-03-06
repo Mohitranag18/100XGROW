@@ -11,11 +11,12 @@ import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
 import Header from './components/header.jsx';
 import BuildResume from './routes/buildresume.jsx';
-import RateMyResume from './routes/ratemyresume.jsx';
+import RateMyResume from './routes/rateMyResume.jsx';
 import MagicATS from './routes/magicATS.jsx';
 import FindJob from './routes/findJob.jsx';
 import Footer from './components/footer.jsx';
 import Template from './templatesAll/template.jsx';
+import ReviewResumeList from './routes/reviewResumeList.jsx';
 
 function App() {
   return (
@@ -50,6 +51,13 @@ function App() {
               </PrivateRoute>
             }
             path="/ratemyresume"
+          />
+          <Route element={
+              <PrivateRoute>
+                <ReviewResumeList />
+              </PrivateRoute>
+            }
+            path="/ratemyresume/resumelist"
           />
           <Route element={
               <PrivateRoute>

@@ -107,3 +107,16 @@ export const analyze_resume_api = async (resume, job_role) => {
     }
 };
 
+// api for rateMyResume
+export const review_resume_create = async (pdf, job_role) => {
+    try {
+        const response = await axios.post(`${BASE_URL}resumes/`, { pdf, job_role }, {headers: {
+            "Content-Type": "multipart/form-data",},
+        withCredentials: true });
+        return response.data; // Ensure only relevant data is returned
+    } catch (error) {
+        console.error("API Error:", error);
+        return { error: error.message }; // Return a safe fallback object
+    }
+};
+
