@@ -13,7 +13,6 @@ function RateMyResume() {
         try{
             const response = await review_resume_create(selectedFile, jobRole)
             alert("Resume Uploaded!");
-            console.log(response)
         }catch{
             alert('error in uploading resume')
         } finally{
@@ -87,10 +86,10 @@ function RateMyResume() {
                             onChange={(e) => setJobRole(e.target.value)}
                             >
                             <option value="">Choose a role</option>
-                            <option value="frontend">Frontend Developer</option>
-                            <option value="backend">Backend Developer</option>
-                            <option value="fullstack">Full Stack Developer</option>
-                            <option value="data-scientist">Data Scientist</option>
+                            <option value="Frontend Developer">Frontend Developer</option>
+                            <option value="Backend Developer">Backend Developer</option>
+                            <option value="Full Stack Developer">Full Stack Developer</option>
+                            <option value="Data Scientist">Data Scientist</option>
                             </select>
                         </div>
 

@@ -120,3 +120,11 @@ export const review_resume_create = async (pdf, job_role) => {
     }
 };
 
+export const review_resume_getlist = async () => {
+    try{
+        const response = await api.get(`${BASE_URL}resumes/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${BASE_URL}resumes/`, { withCredentials: true }));
+    }
+};
