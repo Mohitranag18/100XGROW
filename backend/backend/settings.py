@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'base',
     'magicATS',
+    'rateMyResume',
     'django_htmx', #for temp
 ]
 
