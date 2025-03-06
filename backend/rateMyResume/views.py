@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from .models import ReviewResume, Review
@@ -8,7 +8,7 @@ from .serializers import ResumeSerializer, ReviewSerializer
 
 # 📌 List all resumes or upload a new one
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 def resume_list_create(request):
     if request.method == 'GET':
         resumes = ReviewResume.objects.all()

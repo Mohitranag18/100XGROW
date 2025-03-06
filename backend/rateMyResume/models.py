@@ -1,10 +1,12 @@
 from django.db import models
-from django.conf import settings
+from django.contrib.auth import get_user_model
 
+# Use get_user_model() instead of settings.AUTH_USER_MODEL
+User = get_user_model()
 
 class ReviewResume(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Owner of resume
-    pdf = models.FileField(upload_to='resumes/')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Owner of resume
+    pdf = models.FileField(upload_to='reviewResumes/')
     job_role = models.CharField(max_length=255)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -14,7 +16,7 @@ class ReviewResume(models.Model):
 
 class Review(models.Model):
     resume = models.ForeignKey(ReviewResume, on_delete=models.CASCADE, related_name="reviews")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Reviewer
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Reviewer
     rating = models.IntegerField()  # 1 to 5 stars
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
