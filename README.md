@@ -1,6 +1,33 @@
-# Contribution Guidelines for 100XGROW
+# 🚀 100XGROW – AI-Powered Career Growth Platform  
 
-We are excited to have you contribute to the 100XGROW project! Please follow the guidelines below to ensure a smooth contribution process.
+**100XGROW** is an innovative, AI-driven platform designed to streamline job seekers' experiences by automating resume building, job matching, mentorship, and application tracking. With cutting-edge technologies, 100XGROW empowers users to **build ATS-friendly resumes, receive AI-driven career insights, and land their dream jobs faster.**  
+
+## 🌟 Features  
+
+✅ **One-Click Resume Builder** – Generate professional resumes using LinkedIn data.  
+✅ **Magic ATS Scanner** – Analyze resume ATS compatibility and get AI-powered feedback.  
+✅ **Rate My Resume** – Share and review resumes with peers & industry experts.  
+✅ **Smart Mentorship Connection** – AI-powered mentor matching for career growth.  
+✅ **Automated Job Matching & Distribution** – AI-based job recommendations & auto-apply feature.  
+✅ **Job Application Tracker** – Keep track of applications & follow-ups.  
+
+## 🛠 Tech Stack  
+
+🔹 **Frontend** – React.js, Tailwind CSS  
+🔹 **Backend** – Django, Django REST Framework  
+🔹 **AI & ML** – TensorFlow, Hugging Face (NLP for ATS analysis)  
+🔹 **Database** – PostgreSQL  
+🔹 **APIs & Integrations** – LinkedIn API, Google Gemini API  
+🔹 **Cloud & Deployment** – AWS, Firebase  
+
+## 🚀 Getting Started  
+
+### 📌 Prerequisites  
+
+Ensure you have the following installed:  
+- Node.js & npm (for frontend)  
+- Python & Django (for backend)  
+- PostgreSQL (for database)  
 
 ## Steps to Contribute
 
