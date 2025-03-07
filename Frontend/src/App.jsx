@@ -17,6 +17,7 @@ import FindJob from './routes/findJob.jsx';
 import Footer from './components/footer.jsx';
 import Template from './templatesAll/template.jsx';
 import ReviewResumeList from './routes/reviewResumeList.jsx';
+import ReviewResumeDetails from './routes/reviewResumeDetails.jsx';
 
 function App() {
   return (
@@ -58,6 +59,13 @@ function App() {
               </PrivateRoute>
             }
             path="/ratemyresume/resumelist"
+          />
+          <Route element={
+              <PrivateRoute>
+                <ReviewResumeDetails />
+              </PrivateRoute>
+            }
+            path="/ratemyresume/:pk"
           />
           <Route element={
               <PrivateRoute>

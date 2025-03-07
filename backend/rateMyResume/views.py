@@ -12,8 +12,6 @@ from PIL import Image
 
 
 # 📌 List all resumes or upload a new one
-
-
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def resume_list_create(request):
