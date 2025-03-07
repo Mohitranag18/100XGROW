@@ -1,10 +1,7 @@
-import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 function Template() {
-    const { templateName } = useParams();
-
     const [personalInfoVisible, setpersonalInfoVisible] = useState(false);
     const [educationVisible, setEducationVisible] = useState(false);
     const [experienceVisible, setExperienceVisible] = useState(false);
@@ -22,123 +19,29 @@ function Template() {
     const [projects, setProjects] = useState([]);
     const [skills, setSkills] = useState([]);
 
-    const printRef = useRef();
-
-    // Function to handle the print
-    const handlePrint = () => {
-        const content = printRef.current;
-        const printWindow = window.open('', '', 'height=800,width=800');
-        
-        // Writing the content into the print window
-        printWindow.document.write('<html><head> <title>Print</title><script src="https://unpkg.com/@tailwindcss/browser@4"></script></head><body>');
-        printWindow.document.write(content.innerHTML);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        
-        // Triggering the print
-        printWindow.print();
-    };
-
-
-    useEffect(() => {
-        const savedName = localStorage.getItem('name');
-        const savedDescription = localStorage.getItem('description');
-        const savedContactNum = localStorage.getItem('contactNum');
-        const savedEmail = localStorage.getItem('email');
-        const savedAddress = localStorage.getItem('address');
-        const savedEducation = localStorage.getItem('education');
-        const savedExperience = localStorage.getItem('experience');
-        const savedProjects = localStorage.getItem('projects');
-        const savedSkills = localStorage.getItem('skills');
-
-        if (savedName) setName(savedName);
-        if (savedDescription) setDescription(savedDescription);
-        if (savedContactNum) setContactNum(savedContactNum);
-        if (savedEmail) setEmail(savedEmail);
-        if (savedAddress) setAddress(savedAddress);
-        if (savedEducation) setEducation(JSON.parse(savedEducation));
-        if (savedExperience) setExperience(JSON.parse(savedExperience));
-        if (savedProjects) setProjects(JSON.parse(savedProjects));
-        if (savedSkills) setSkills(JSON.parse(savedSkills));
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('name', name);
-    }, [name]);
-
-    useEffect(() => {
-        localStorage.setItem('description', description);
-    }, [description]);
-
-    useEffect(() => {
-        localStorage.setItem('contactNum', contactNum);
-    }, [contactNum]);
-
-    useEffect(() => {
-        localStorage.setItem('email', email);
-    }, [email]);
-
-    useEffect(() => {
-        localStorage.setItem('address', address);
-    }, [address]);
-
-    useEffect(() => {
-        localStorage.setItem('education', JSON.stringify(education));
-    }, [education]);
-
-    useEffect(() => {
-        localStorage.setItem('experience', JSON.stringify(experience));
-    }, [experience]);
-
-    useEffect(() => {
-        localStorage.setItem('projects', JSON.stringify(projects));
-    }, [projects]);
-
-    useEffect(() => {
-        localStorage.setItem('skills', JSON.stringify(skills));
-    }, [skills]);
-
     const handleEducationAdd = () => {
-        setEducation([...education, { institute: '', startYear: '', endYear: '', course: '', percentage: '' }]);
-    };
-
-    const handleEducationChange = (index, field, value) => {
-        const newEducation = [...education];
-        newEducation[index][field] = value;
-        setEducation(newEducation);
+        setEducation([...education, { institute: '', startYear: '', endYear: '', course: '' }]);
     };
 
     const handleExperienceAdd = () => {
         setExperience([...experience, { position: '', startYear: '', endYear: '', description: '' }]);
     };
 
-    const handleExperienceChange = (index, field, value) => {
-        const newExperience = [...experience];
-        newExperience[index][field] = value;
-        setExperience(newExperience);
-    };
-
     const handleProjectAdd = () => {
         setProjects([...projects, { name: '', description: '', link: '' }]);
     };
 
-    const handleProjectChange = (index, field, value) => {
-        const newProjects = [...projects];
-        newProjects[index][field] = value;
-        setProjects(newProjects);
-    };
-
     const handleSkillChange = (e) => {
-        setSkills(e.target.value.split(",").map(skill => skill.trim())); // Convert to array and trim spaces
+        setSkills(e.target.value.split(",").map(skill => skill)); // Convert to array
     };
 
     return ( 
         <>
-        <div className={`h-full w-full text-[#ffffff] bg-[#030712] template-${templateName}`}>
+        <div className="h-full w-full text-[#ffffff] bg-[#030712]">
             {/* panel 1 */}
             <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
                 <div className="flex flex-col gap-8">
-                    <h1 className="text-5xl font-bold">Template {templateName}</h1>
+                    <h1 className="text-5xl font-bold">Template 1</h1>
                 </div>
                 <div className="w-full flex justify-center gap-8">
                     <input type="text" placeholder="Enter Your Linkedin handle, Eg. mohitrana18" className="p-2 border border-gray-500 bg-[#121826] text-white rounded w-86"/>
@@ -186,23 +89,35 @@ function Template() {
                                 {education.map((edu, index) => (
                                     <div key={index} className="flex flex-col gap-2">
                                         <input type="text" placeholder="Institute" value={edu.institute}
-                                            onChange={(e) => handleEducationChange(index, 'institute', e.target.value)}
+                                            onChange={(e) => {
+                                                const newEdu = [...education];
+                                                newEdu[index].institute = e.target.value;
+                                                setEducation(newEdu);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Start Year" value={edu.startYear}
-                                            onChange={(e) => handleEducationChange(index, 'startYear', e.target.value)}
+                                            onChange={(e) => {
+                                                const newEdu = [...education];
+                                                newEdu[index].startYear = e.target.value;
+                                                setEducation(newEdu);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="End Year" value={edu.endYear}
-                                            onChange={(e) => handleEducationChange(index, 'endYear', e.target.value)}
+                                            onChange={(e) => {
+                                                const newEdu = [...education];
+                                                newEdu[index].endYear = e.target.value;
+                                                setEducation(newEdu);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Course" value={edu.course}
-                                            onChange={(e) => handleEducationChange(index, 'course', e.target.value)}
-                                            className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
-                                        />
-                                        <input type="text" placeholder="Percentage/CGPA and activities" value={edu.percentage}
-                                            onChange={(e) => handleEducationChange(index, 'percentage', e.target.value)}
+                                            onChange={(e) => {
+                                                const newEdu = [...education];
+                                                newEdu[index].course = e.target.value;
+                                                setEducation(newEdu);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                     </div>
@@ -221,19 +136,35 @@ function Template() {
                                 {experience.map((exp, index) => (
                                     <div key={index} className="flex flex-col gap-2">
                                         <input type="text" placeholder="Position" value={exp.position}
-                                            onChange={(e) => handleExperienceChange(index, 'position', e.target.value)}
+                                            onChange={(e) => {
+                                                const newExp = [...experience];
+                                                newExp[index].position = e.target.value;
+                                                setExperience(newExp);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Description" value={exp.description}
-                                            onChange={(e) => handleExperienceChange(index, 'description', e.target.value)}
+                                            onChange={(e) => {
+                                                const newExp = [...experience];
+                                                newExp[index].description = e.target.value;
+                                                setExperience(newExp);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Start Year" value={exp.startYear}
-                                            onChange={(e) => handleExperienceChange(index, 'startYear', e.target.value)}
+                                            onChange={(e) => {
+                                                const newExp = [...experience];
+                                                newExp[index].startYear = e.target.value;
+                                                setExperience(newExp);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="End Year" value={exp.endYear}
-                                            onChange={(e) => handleExperienceChange(index, 'endYear', e.target.value)}
+                                            onChange={(e) => {
+                                                const newExp = [...experience];
+                                                newExp[index].endYear = e.target.value;
+                                                setExperience(newExp);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                     </div>
@@ -252,15 +183,27 @@ function Template() {
                                 {projects.map((proj, index) => (
                                     <div key={index} className="flex flex-col gap-2">
                                         <input type="text" placeholder="Project Name" value={proj.name}
-                                            onChange={(e) => handleProjectChange(index, 'name', e.target.value)}
+                                            onChange={(e) => {
+                                                const newProj = [...projects];
+                                                newProj[index].name = e.target.value;
+                                                setProjects(newProj);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Description" value={proj.description}
-                                            onChange={(e) => handleProjectChange(index, 'description', e.target.value)}
+                                            onChange={(e) => {
+                                                const newProj = [...projects];
+                                                newProj[index].description = e.target.value;
+                                                setProjects(newProj);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                         <input type="text" placeholder="Project Link" value={proj.link}
-                                            onChange={(e) => handleProjectChange(index, 'link', e.target.value)}
+                                            onChange={(e) => {
+                                                const newProj = [...projects];
+                                                newProj[index].link = e.target.value;
+                                                setProjects(newProj);
+                                            }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
                                     </div>
@@ -285,39 +228,33 @@ function Template() {
                 </div>
 
                 {/* right */}
-                {(templateName === 'template1') ? (
-                <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
-                    <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
-                        <h2 className="text-2xl text-center text-3xl bg-gray-200 mt-8 font-medium p-2">{name}</h2>
-                        <div className="w-min-max flex justify-evenly items-start my-2">
-                            <p className="max-w-[25%] font-semibold text-center text-blue-700 flex flex-wrap">{contactNum}</p>
-                            <span className='rounded-xl bg-gray-700 h-2 w-2 mt-auto mb-auto'></span>
-                            <p className="max-w-[40%] font-semibold text-center text-blue-700 flex flex-wrap underline"><a href={`mailto:${email}`}>{email}</a></p>
-                            <span className='rounded-xl bg-gray-700 h-2 w-2 mt-auto mb-auto'></span>
-                            <p className="max-w-[35%] font-semibold text-center text-blue-700 flex flex-wrap">{address}</p>
+                <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
+                    <div className="h-238 w-168 bg-white text-black p-2">
+                        <div className="w-[100%] flex justify-evenly items-start my-2">
+                            <p className="max-w-[25%] font-semibold text-blue-700 flex flex-wrap">{contactNum}</p>
+                            <p className="max-w-[40%] font-semibold text-blue-700 flex flex-wrap underline"><a href={`mailto:${email}`}>{email}</a></p>
+                            <p className="max-w-[35%] font-semibold text-blue-700 flex flex-wrap">{address}</p>
                         </div>
-                        
-                        <p className="text-gray-700 text-center mb-4 mt-6">{description}</p>
+                        <h2 className="text-2xl font-bold">{name}</h2>
+                        <p className="text-gray-700 mb-2">{description}</p>
 
-                        <h3 className="text-xl font-semibold w-full bg-gray-200 p-0.5 pl-1 pr-1 w-min mb-1">Experience</h3>
-                        {experience.map((exp, index) => (
-                            <div key={index}>
-                                <p className=''>{exp.startYear} - {exp.endYear}</p>
-                                <p className="text-gray-600 font-medium">{exp.position}</p>
-                                <p className='mb-4'>{exp.description}</p>
-                            </div>
-                        ))}
-
-                        <h3 className="text-xl font-semibold w-full mt-4 bg-gray-200 p-0.5  pl-1 pr-1 w-min mb-1"> Education</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Education</h3>
                         {education.map((edu, index) => (
                             <div key={index}>
-                                <p className=''>{edu.startYear} - {edu.endYear}</p>
-                                <p className="font-semibold font-medium">{edu.course} | {edu.institute} </p>
-                                <p className="text-gray-600 font-medium mb-4">{edu.percentage} </p>
+                                <p className="font-semibold">{edu.course}</p>
+                                <p className="text-gray-600">{edu.institute} ({edu.startYear} - {edu.endYear})</p>
                             </div>
                         ))}
 
-                        <h3 className="text-xl font-semibold w-full mt-4 bg-gray-200 p-0.5  pl-1 pr-1 w-min mb-1">Projects</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Experience</h3>
+                        {experience.map((exp, index) => (
+                            <div key={index}>
+                                <p className="text-gray-600">{exp.position} ({exp.startYear} - {exp.endYear})</p>
+                                <p>{exp.description}</p>
+                            </div>
+                        ))}
+
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Projects</h3>
                         {projects.map((proj, index) => (
                             <div key={index}>
                                 <p className="text-blue-600 underline font-semibold">
@@ -326,148 +263,13 @@ function Template() {
                                 <p>{proj.description}</p>
                             </div>
                         ))}
-                        <h3 className="text-xl font-semibold mt-4 w-full  bg-gray-200 p-0.5  pl-1 pr-1 w-min mb-1">Skills</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Skills</h3>
                         {skills.map((skill, index) => (
-                            <p className="inline-block m-1 mb-4 bg-gray-300 px-1 rounded-sm" key={index}>{skill}</p>
+                            <p className="inline-block m-1 bg-gray-300 px-1 rounded-sm" key={index}>{skill}</p>
                         ))}
                     </div>
-                    
-                    {/* <div>
-                        <button className="w-8 h-4 bg-gray-300 rounded" onClick={handlePrint}></button>
-                        <button></button>
-                    </div> */}
-
-                </div> 
-                )
-                : (templateName === 'template2') ? 
-                    <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
-                        <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
-                            <h2 className="text-2xl text-start text-sky-400 text-3xl  mt-8 font-sm p-2 border-b-2 border-solid border-sky-400 ">{name}</h2>
-                            <div className="w-min ml-auto mr-auto flex justify-evenly items-start my-2">
-                                <p className="max-w-[25%] font-semibold text-center flex flex-wrap">{contactNum}</p>
-                                <p>|</p>
-                                <p className="max-w-[40%] font-semibold text-center flex flex-wrap underline"><a href={`mailto:${email}`}>{email} </a></p>
-                                <p>|</p>
-                                <p className="max-w-[35%] font-semibold text-center flex flex-wrap">{address}</p>
-                            </div>
-                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Profile</h3>
-                            <p className="text-gray-700 text-center mb-4 text-start">{description}</p>
-    
-                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Experience</h3>
-                            {experience.map((exp, index) => (
-                                <div key={index}>
-                                    <p className="text-black-600 font-2xl font-semibold">{exp.position} | {exp.startYear} - {exp.endYear}</p>
-                                    <p className='mb-4'>{exp.description}</p>
-                                </div>
-                            ))}
-    
-                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min"> Education</h3>
-                            {education.map((edu, index) => (
-                                <div key={index}>
-                                    <p className='text-black-600 font-2xl font-semibold'>{edu.startYear} - {edu.endYear} | {edu.course} | {edu.institute} </p>
-                                    <p className="text-gray-600 font-medium mb-4">{edu.percentage} </p>
-                                </div>
-                            ))}
-    
-                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Projects</h3>
-                            {projects.map((proj, index) => (
-                                <div key={index}>
-                                    <p className="text-black-600 font-2xl font-semibold">
-                                    <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.name}</a>
-                                    </p>
-                                    <p className='mb-2'>{proj.description}</p>
-                                </div>
-                            ))}
-                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Skills</h3>
-                            {skills.map((skill, index) => (
-                                <p className="inline-block m-1 mb-4 bg-gray-300 px-1 rounded-sm" key={index}>{skill}</p>
-                            ))}
-                        </div>
-                        
-                        {/* <div>
-                            <button className="w-8 h-4 bg-gray-300 rounded" onClick={handlePrint}></button>
-                            <button></button>
-                        </div> */}
-    
-                    </div>
-                : (templateName === 'template3') ? 
-                    <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
-                        <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
-                            <h2 className="text-2xl text-center text-black-700 text-3xl  mt-8 font-sm p-2 border-b-2 border-black-700 ">{name}</h2>
-                            <div className="w-full ml-auto mr-auto flex justify-evenly items-start py-4 border-b-2 border-black-700 ">
-                                <p className="max-w-[25%] font-semibold text-center flex flex-wrap">{contactNum}</p>
-                                <p>|</p>
-                                <p className="max-w-[40%] font-semibold text-center flex flex-wrap underline"><a href={`mailto:${email}`}>{email} </a></p>
-                                <p>|</p>
-                                <p className="max-w-[35%] font-semibold text-center flex flex-wrap">{address}</p>
-                            </div>
-                            <div className='flex'>
-                            {/* Left Column: Skills & Education */}
-                            <div className="left w-1/3  p-4">
-                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Skills</h3>
-                                <div className="skills-list flex-column">
-                                {skills.map((skill, index) => (
-                                    <p className="m-1 mb-2 text-black " key={index}>
-                                    {skill} <br/>
-                                     
-                                    </p>
-                                ))}
-                                </div>
-
-                                <h3 className="text-2xl border-b-2 mt-8 border-black-700 inline-block text-black-700 py-2 mb-2">Education</h3>
-                                <div className="education-list">
-                                {education.map((edu, index) => (
-                                    <div key={index} className="education-item mb-4">
-                                    <p className=''>{edu.institute}</p>
-                                    <p className='text-black font-semibold'>{edu.startYear} - {edu.endYear} </p>
-                                    <p className=''>{edu.course}</p>
-                                    <p className="text-gray-600 font-medium">{edu.percentage}</p>
-                                    </div>
-                                ))}
-                                </div>
-                            </div>
-
-                            {/* Right Column: Profile, Experience, Projects */}
-                            <div className="right w-2/3 p-4">
-                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Profile</h3>
-                                <p className="text-gray-700 text-left mb-4">{description}</p>
-
-                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Experience</h3>
-                                <div className="experience-list">
-                                {experience.map((exp, index) => (
-                                    <div key={index} className="experience-item mb-4">
-                                    <p className="text-black ">{exp.position} </p>
-                                    <p className='font-semibold'>{exp.startYear} - {exp.endYear}</p>
-                                    <p className='text-gray-600'>{exp.description}</p>
-                                    </div>
-                                ))}
-                                </div>
-
-                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Projects</h3>
-                                <div className="projects-list">
-                                {projects.map((proj, index) => (
-                                    <div key={index} className="project-item mb-4">
-                                    <p className="text-black font-semibold">
-                                        <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-black-500 hover:underline">
-                                        {proj.name}
-                                        </a>
-                                    </p>
-                                    <p className='text-gray-600'>{proj.description}</p>
-                                    </div>
-                                ))}
-                                </div>
-                            </div>
-                            </div>       
-                            </div>
-                            </div>
-                :
-                
-                (<div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
-                    <div className="w-full text-xl text-center">This Template is not available</div>
-                </div> )
-                 }
+                </div>
             </div>
-                    
         </div>
         </>
      );
