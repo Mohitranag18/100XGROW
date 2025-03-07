@@ -285,7 +285,7 @@ function Template() {
                 </div>
 
                 {/* right */}
-                {(templateName === 'template1') ? 
+                {(templateName === 'template1') ? (
                 <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
                     <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
                         <h2 className="text-2xl text-center text-3xl bg-gray-200 mt-8 font-medium p-2">{name}</h2>
@@ -338,11 +338,63 @@ function Template() {
                     </div> */}
 
                 </div> 
+                )
+                : (templateName === 'template2') ? 
+                    <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
+                        <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
+                            <h2 className="text-2xl text-start text-sky-400 text-3xl  mt-8 font-sm p-2 border-b-2 border-solid border-sky-400 ">{name}</h2>
+                            <div className="w-min ml-auto mr-auto flex justify-evenly items-start my-2">
+                                <p className="max-w-[25%] font-semibold text-center flex flex-wrap">{contactNum}</p>
+                                <p>|</p>
+                                <p className="max-w-[40%] font-semibold text-center flex flex-wrap underline"><a href={`mailto:${email}`}>{email} </a></p>
+                                <p>|</p>
+                                <p className="max-w-[35%] font-semibold text-center flex flex-wrap">{address}</p>
+                            </div>
+                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Profile</h3>
+                            <p className="text-gray-700 text-center mb-4 text-start">{description}</p>
+    
+                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Experience</h3>
+                            {experience.map((exp, index) => (
+                                <div key={index}>
+                                    <p className="text-black-600 font-2xl font-semibold">{exp.position} | {exp.startYear} - {exp.endYear}</p>
+                                    <p className='mb-4'>{exp.description}</p>
+                                </div>
+                            ))}
+    
+                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min"> Education</h3>
+                            {education.map((edu, index) => (
+                                <div key={index}>
+                                    <p className='text-black-600 font-2xl font-semibold'>{edu.startYear} - {edu.endYear} | {edu.course} | {edu.institute} </p>
+                                    <p className="text-gray-600 font-medium mb-4">{edu.percentage} </p>
+                                </div>
+                            ))}
+    
+                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Projects</h3>
+                            {projects.map((proj, index) => (
+                                <div key={index}>
+                                    <p className="text-black-600 font-2xl font-semibold">
+                                    <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.name}</a>
+                                    </p>
+                                    <p className='mb-2'>{proj.description}</p>
+                                </div>
+                            ))}
+                            <h3 className="text-2xl font-semibold w-full text-sky-400 w-min">Skills</h3>
+                            {skills.map((skill, index) => (
+                                <p className="inline-block m-1 mb-4 bg-gray-300 px-1 rounded-sm" key={index}>{skill}</p>
+                            ))}
+                        </div>
+                        
+                        {/* <div>
+                            <button className="w-8 h-4 bg-gray-300 rounded" onClick={handlePrint}></button>
+                            <button></button>
+                        </div> */}
+    
+                    </div>
                 :
                 
-                <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
-                    <div classaName="w-full text-xl ">This Template is not available</div>
-                </div> 
+                (<div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
+                    <div className="w-full text-xl text-center">This Template is not available</div>
+                </div> )
                  }
             </div>
                     
