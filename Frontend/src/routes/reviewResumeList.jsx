@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { review_resume_getlist } from '../api/endpoints';
+import { SERVER_URL } from '../api/endpoints'
+import { useNavigate } from 'react-router-dom';
 
 function ReviewResumeList() {
+    const nav = useNavigate()
     const [loading, setLoading] = useState(false);
     const [resumes, setResumes] = useState([]); // Ensure it's an empty array initially
 
@@ -26,9 +29,9 @@ function ReviewResumeList() {
     return (
         <div className="min-h-screen  w-full text-[#ffffff] bg-[#030712]">
             {/* panel 1 */}
-            <dir className="h-112 w-full flex flex-col justify-center items-center text-center gap-8 p-6 border-b-2 border-[#1e2939]">
+            <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-8 p-6 border-b-2 border-[#1e2939]">
                 <h1 className="text-5xl font-bold">Resumes for Reviews</h1>
-            </dir>
+            </div>
 
             {/* panel 2 */}
             <div className="w-full flex flex-wrap justify-center items-center text-center gap-8 p-6 py-16 border-b-2 border-[#1e2939]">
@@ -37,7 +40,7 @@ function ReviewResumeList() {
                     resumes.map((resume) => (
                         <div key={resume.id} className="h-full w-86 bg-[#1e2939] p-1 rounded-lg">
                             <div className="w-full h-86 rounded-lg bg-[#030712] overflow-hidden">
-                                <img className="h-full w-full object-cover object-top overflow-hidden" src={`http://127.0.0.1:8000/api${resume.image}`} alt={`${resume.user}'s Resume Image`} />
+                                <img className="h-full w-full object-cover object-top overflow-hidden" src={`${SERVER_URL}${resume.image}`} alt={`${resume.user}'s Resume Image`} />
                             </div>
                             <div className="flex justify-between items-center p-2 py-4">
                                 <div className='text-white flex flex-col items-start gap-1'>
@@ -45,7 +48,7 @@ function ReviewResumeList() {
                                     <p className="text-md">{resume.job_role}</p>
                                 </div>
                                 <a
-                                    href={`http://127.0.0.1:8000/api${resume.pdf}`}
+                                    onClick={()=>nav(`/ratemyresume/${resume.id}`)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-blue-600 text-white px-4 py-1 rounded-sm hover:bg-blue-700 transition"

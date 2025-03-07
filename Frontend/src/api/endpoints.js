@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+export const SERVER_URL = 'http://127.0.0.1:8000/api'
 const BASE_URL = 'http://127.0.0.1:8000/api/'
 const LOGIN_URL = `${BASE_URL}token/`
 const REFRESH_URL = `${BASE_URL}token/refresh/`
@@ -126,5 +127,14 @@ export const review_resume_getlist = async () => {
         return response.data;
     }catch(error){
         return call_refresh(error, () => api.get(`${BASE_URL}resumes/`, { withCredentials: true }));
+    }
+};
+
+export const resume_detail = async (pk) => {
+    try{
+        const response = await api.get(`${BASE_URL}resumes/${pk}`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${BASE_URL}resumes/pk`, { withCredentials: true }));
     }
 };
