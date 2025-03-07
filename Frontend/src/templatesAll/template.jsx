@@ -390,6 +390,76 @@ function Template() {
                         </div> */}
     
                     </div>
+                : (templateName === 'template3') ? 
+                    <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8 gap-4 flex" ref={printRef}>
+                        <div className="h-238 w-168 bg-white text-black pt-2 pb-2 pl-8 pr-8 rounded-l">
+                            <h2 className="text-2xl text-center text-black-700 text-3xl  mt-8 font-sm p-2 border-b-2 border-black-700 ">{name}</h2>
+                            <div className="w-full ml-auto mr-auto flex justify-evenly items-start py-4 border-b-2 border-black-700 ">
+                                <p className="max-w-[25%] font-semibold text-center flex flex-wrap">{contactNum}</p>
+                                <p>|</p>
+                                <p className="max-w-[40%] font-semibold text-center flex flex-wrap underline"><a href={`mailto:${email}`}>{email} </a></p>
+                                <p>|</p>
+                                <p className="max-w-[35%] font-semibold text-center flex flex-wrap">{address}</p>
+                            </div>
+                            <div className='flex'>
+                            {/* Left Column: Skills & Education */}
+                            <div className="left w-1/3  p-4">
+                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Skills</h3>
+                                <div className="skills-list flex-column">
+                                {skills.map((skill, index) => (
+                                    <p className="m-1 mb-2 text-black " key={index}>
+                                    {skill} <br/>
+                                     
+                                    </p>
+                                ))}
+                                </div>
+
+                                <h3 className="text-2xl border-b-2 mt-8 border-black-700 inline-block text-black-700 py-2 mb-2">Education</h3>
+                                <div className="education-list">
+                                {education.map((edu, index) => (
+                                    <div key={index} className="education-item mb-4">
+                                    <p className=''>{edu.institute}</p>
+                                    <p className='text-black font-semibold'>{edu.startYear} - {edu.endYear} </p>
+                                    <p className=''>{edu.course}</p>
+                                    <p className="text-gray-600 font-medium">{edu.percentage}</p>
+                                    </div>
+                                ))}
+                                </div>
+                            </div>
+
+                            {/* Right Column: Profile, Experience, Projects */}
+                            <div className="right w-2/3 p-4">
+                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Profile</h3>
+                                <p className="text-gray-700 text-left mb-4">{description}</p>
+
+                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Experience</h3>
+                                <div className="experience-list">
+                                {experience.map((exp, index) => (
+                                    <div key={index} className="experience-item mb-4">
+                                    <p className="text-black ">{exp.position} </p>
+                                    <p className='font-semibold'>{exp.startYear} - {exp.endYear}</p>
+                                    <p className='text-gray-600'>{exp.description}</p>
+                                    </div>
+                                ))}
+                                </div>
+
+                                <h3 className="text-2xl border-b-2 border-black-700 inline-block text-black-700 py-2 mb-2">Projects</h3>
+                                <div className="projects-list">
+                                {projects.map((proj, index) => (
+                                    <div key={index} className="project-item mb-4">
+                                    <p className="text-black font-semibold">
+                                        <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-black-500 hover:underline">
+                                        {proj.name}
+                                        </a>
+                                    </p>
+                                    <p className='text-gray-600'>{proj.description}</p>
+                                    </div>
+                                ))}
+                                </div>
+                            </div>
+                            </div>       
+                            </div>
+                            </div>
                 :
                 
                 (<div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
