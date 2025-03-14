@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'base',
     'magicATS',
     'rateMyResume',
+    'buildResume',
     'django_htmx', #for temp
 ]
 

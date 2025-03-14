@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('base.urls')),
     path('api/',include('magicATS.urls')),
-    path('api/',include('rateMyResume.urls'))
+    path('api/',include('rateMyResume.urls')),
+    path('api/',include('buildResume.urls'))
 ]
