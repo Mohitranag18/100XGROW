@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from linkedin_scraper import Person
 import time
+from selenium.webdriver.chrome.options import Options
 
 # Global WebDriver Variable (Persistent)
 driver = None
@@ -17,13 +18,44 @@ def initialize_driver():
     """Initialize Selenium WebDriver globally"""
     global driver
     if driver is None or driver.session_id is None:
+        """Initialize Selenium WebDriver globally with optimized settings"""
+        chrome_options = Options()
+        
+        # ✅ Run in Headless Mode (No UI)
+        chrome_options.add_argument("--headless=new")  
+
+        # ✅ Disable GPU acceleration (improves stability in headless mode)
+        chrome_options.add_argument("--disable-gpu")  
+
+        # ✅ Disable Windows Performance Counters (Fixes PdhCollectQueryData error)
+        chrome_options.add_argument("--disable-features=CalculateNativeWinOcclusion")
+
+        # ✅ Disable logging & error messages for a cleaner console
+        chrome_options.add_argument("--log-level=3")  
+
+        # ✅ Optimize performance by turning off unnecessary UI elements
+        chrome_options.add_argument("--disable-software-rasterizer")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+
+        # ✅ Reduce resource usage (Disable Images, Scripts, CSS)
+        prefs = {
+            "profile.managed_default_content_settings.images": 2,  # Disable Images
+            "profile.managed_default_content_settings.stylesheets": 2,  # Disable CSS
+            "profile.managed_default_content_settings.cookies": 2,  # Disable Cookies
+            "profile.managed_default_content_settings.javascript": 1,  # Allow JS (Needed for LinkedIn)
+            "profile.managed_default_content_settings.plugins": 2,  # Disable Plugins
+            "profile.managed_default_content_settings.popups": 2  # Disable Popups
+        }
+        chrome_options.add_experimental_option("prefs", prefs)
+
         chrome_service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=chrome_service)
 
 def wait_for_login():
     """Wait until the user logs in manually"""
     try:
-        WebDriverWait(driver, 300).until(
+        WebDriverWait(driver, 100).until(
             EC.url_contains("/feed") 
         )
         print("Login detected!")

@@ -138,3 +138,13 @@ export const resume_detail = async (pk) => {
         return call_refresh(error, () => api.get(`${BASE_URL}resumes/pk`, { withCredentials: true }));
     }
 };
+
+export const scrape_linkedin_profile = async (username) => {
+    try {
+        const response = await axios.post(`${BASE_URL}scrape-linkedin/`, { username },{ withCredentials: true });
+        return response.data; // Ensure only relevant data is returned
+    } catch (error) {
+        console.error("API Error:", error);
+        return { error: error.message }; // Return a safe fallback object
+    }
+};

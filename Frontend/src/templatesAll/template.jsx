@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { scrape_linkedin_profile } from "../api/endpoints";
 
 function Template() {
+    const [username, setUsername] = useState('')
+    const [loading, setLoading] = useState(false)
+
     const [personalInfoVisible, setpersonalInfoVisible] = useState(false);
     const [educationVisible, setEducationVisible] = useState(false);
     const [experienceVisible, setExperienceVisible] = useState(false);
@@ -35,6 +39,19 @@ function Template() {
         setSkills(e.target.value.split(",").map(skill => skill)); // Convert to array
     };
 
+    const scrapeLinkedinProfile = async () => {
+        setLoading(true)
+        try{
+            const response = await scrape_linkedin_profile(username)
+            console.log(response)
+            alert("data fetched from linkedin");
+        }catch{
+            alert('error in geting data from linkedin profile')
+        } finally{
+            setLoading(false)
+        }
+    }
+
     return ( 
         <>
         <div className="h-full w-full text-[#ffffff] bg-[#030712]">
@@ -44,9 +61,12 @@ function Template() {
                     <h1 className="text-5xl font-bold">Template 1</h1>
                 </div>
                 <div className="w-full flex justify-center gap-8">
-                    <input type="text" placeholder="Enter Your Linkedin handle, Eg. mohitrana18" className="p-2 border border-gray-500 bg-[#121826] text-white rounded w-86"/>
-                    <div className="bg-blue-700 p-2 rounded-sm cursor-pointer">Get Data From Linkedin</div>
+                    <input onChange={(e)=>setUsername(e.target.value)} type="text" value={username} placeholder="Enter Your Linkedin handle, Eg. mohitrana18" className="p-2 border border-gray-500 bg-[#121826] text-white rounded w-86"/>
+                    <div onClick={scrapeLinkedinProfile} className="bg-blue-700 p-2 rounded-sm cursor-pointer">Get Data From Linkedin</div>
                 </div>
+                {loading && 
+                    <p>Getting Data from linkedin profile.....</p>
+                }
             </div>
 
             {/* panel 2 */}
