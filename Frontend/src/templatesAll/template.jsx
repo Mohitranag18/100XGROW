@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { scrape_linkedin_profile } from "../api/endpoints";
+import { get_linkedin_profile } from "../api/endpoints";
+import { UploadCloud } from "lucide-react";
 
 function Template() {
-    const [username, setUsername] = useState('')
     const [loading, setLoading] = useState(false)
+    const [selectedFile, setSelectedFile] = useState(null);
 
     const [personalInfoVisible, setpersonalInfoVisible] = useState(false);
     const [educationVisible, setEducationVisible] = useState(false);
@@ -24,11 +25,23 @@ function Template() {
     const [skills, setSkills] = useState([]);
 
     const handleEducationAdd = () => {
-        setEducation([...education, { institute: '', startYear: '', endYear: '', course: '' }]);
+        setEducation([...education, {
+            institution: '', 
+            degree: '', 
+            field_of_study: '', 
+            start_date: '', 
+            end_date: ''
+        }]);
     };
 
     const handleExperienceAdd = () => {
-        setExperience([...experience, { position: '', startYear: '', endYear: '', description: '' }]);
+        setExperience([...experience, {
+            company: '',
+            role: '',
+            start_date: '',
+            end_date: '',
+            description: ''
+        },]);
     };
 
     const handleProjectAdd = () => {
@@ -39,18 +52,43 @@ function Template() {
         setSkills(e.target.value.split(",").map(skill => skill)); // Convert to array
     };
 
-    const scrapeLinkedinProfile = async () => {
+    const getLinkedinProfileData = async () => {
         setLoading(true)
         try{
-            const response = await scrape_linkedin_profile(username)
+            const response = await get_linkedin_profile(selectedFile)
             console.log(response)
-            alert("data fetched from linkedin");
+            if(response.success){
+                setName(response.data.name)
+                setDescription(response.data.headline)
+                setContactNum(response.data.contact.phone)
+                setEmail(response.data.contact.email)
+                setAddress(response.data.location)
+                setEducation(response.data.education)
+                setExperience(response.data.experience)
+                setSkills(response.data.skills)
+                alert("data fetched from linkedin");
+            }
+            else{
+                alert(response.error)
+            }
         }catch{
             alert('error in geting data from linkedin profile')
         } finally{
             setLoading(false)
+            setSelectedFile(null)
         }
     }
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) setSelectedFile(file);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file) setSelectedFile(file);
+    };
 
     return ( 
         <>
@@ -60,9 +98,36 @@ function Template() {
                 <div className="flex flex-col gap-8">
                     <h1 className="text-5xl font-bold">Template 1</h1>
                 </div>
-                <div className="w-full flex justify-center gap-8">
-                    <input onChange={(e)=>setUsername(e.target.value)} type="text" value={username} placeholder="Enter Your Linkedin handle, Eg. mohitrana18" className="p-2 border border-gray-500 bg-[#121826] text-white rounded w-86"/>
-                    <div onClick={scrapeLinkedinProfile} className="bg-blue-700 p-2 rounded-sm cursor-pointer">Get Data From Linkedin</div>
+                <div className="w-full flex flex-wrap justify-center items-center gap-x-12 gap-y-8 py-4">
+                    <div className="h-fit flex flex-col gap-2">
+                        <div
+                            className="h-30 w-96 flex flex-col justify-center items-center border-2 border-dashed bg-[#030712] border-gray-400 p-6 text-center rounded-lg cursor-pointer hover:bg-[#1e2939]"
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={handleDrop}
+                        >
+                            <label htmlFor="file-upload" className="cursor-pointer">
+                            <UploadCloud className="mx-auto text-gray-500 mb-2" size={32} />
+                            <p className="text-gray-500">Drag & drop your file here</p>
+                            <p className="text-gray-400 text-sm">or click to browse</p>
+                            </label>
+                            <input
+                            type="file"
+                            id="file-upload"
+                            className="hidden"
+                            onChange={handleFileChange}
+                            accept=".pdf"
+                            />
+                        </div>
+                        {selectedFile && (
+                            <p className="mt-2 text-sm text-green-600 text-center">
+                            {selectedFile.name} selected
+                            </p>
+                        )}
+                    </div>
+                    <div className="h-fit flex justify-center items-center gap-8">
+                        <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-3 py-3 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+                    </div>
+                    <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
                 </div>
                 {loading && 
                     <p>Getting Data from linkedin profile.....</p>
@@ -108,34 +173,42 @@ function Template() {
                             <div className="flex flex-col gap-6">
                                 {education.map((edu, index) => (
                                     <div key={index} className="flex flex-col gap-2">
-                                        <input type="text" placeholder="Institute" value={edu.institute}
+                                        <input type="text" placeholder="Institution" value={edu.institution}
                                             onChange={(e) => {
                                                 const newEdu = [...education];
-                                                newEdu[index].institute = e.target.value;
+                                                newEdu[index].institution = e.target.value;
                                                 setEducation(newEdu);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
-                                        <input type="text" placeholder="Start Year" value={edu.startYear}
+                                        <input type="text" placeholder="Start Date" value={edu.start_date}
                                             onChange={(e) => {
                                                 const newEdu = [...education];
-                                                newEdu[index].startYear = e.target.value;
+                                                newEdu[index].start_date = e.target.value;
                                                 setEducation(newEdu);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
-                                        <input type="text" placeholder="End Year" value={edu.endYear}
+                                        <input type="text" placeholder="End Date" value={edu.end_date}
                                             onChange={(e) => {
                                                 const newEdu = [...education];
-                                                newEdu[index].endYear = e.target.value;
+                                                newEdu[index].end_date = e.target.value;
                                                 setEducation(newEdu);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
-                                        <input type="text" placeholder="Course" value={edu.course}
+                                        <input type="text" placeholder="Degree" value={edu.degree}
                                             onChange={(e) => {
                                                 const newEdu = [...education];
-                                                newEdu[index].course = e.target.value;
+                                                newEdu[index].degree = e.target.value;
+                                                setEducation(newEdu);
+                                            }}
+                                            className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
+                                        />
+                                        <input type="text" placeholder="Field of study" value={edu.field_of_study}
+                                            onChange={(e) => {
+                                                const newEdu = [...education];
+                                                newEdu[index].field_of_study = e.target.value;
                                                 setEducation(newEdu);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
@@ -155,10 +228,18 @@ function Template() {
                             <div className="flex flex-col gap-6">
                                 {experience.map((exp, index) => (
                                     <div key={index} className="flex flex-col gap-2">
-                                        <input type="text" placeholder="Position" value={exp.position}
+                                        <input type="text" placeholder="Company" value={exp.company}
                                             onChange={(e) => {
                                                 const newExp = [...experience];
-                                                newExp[index].position = e.target.value;
+                                                newExp[index].company = e.target.value;
+                                                setExperience(newExp);
+                                            }}
+                                            className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
+                                        />
+                                        <input type="text" placeholder="Role" value={exp.role}
+                                            onChange={(e) => {
+                                                const newExp = [...experience];
+                                                newExp[index].role = e.target.value;
                                                 setExperience(newExp);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
@@ -171,18 +252,18 @@ function Template() {
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
-                                        <input type="text" placeholder="Start Year" value={exp.startYear}
+                                        <input type="text" placeholder="Start Date" value={exp.start_date}
                                             onChange={(e) => {
                                                 const newExp = [...experience];
-                                                newExp[index].startYear = e.target.value;
+                                                newExp[index].start_date = e.target.value;
                                                 setExperience(newExp);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
                                         />
-                                        <input type="text" placeholder="End Year" value={exp.endYear}
+                                        <input type="text" placeholder="End Date" value={exp.end_date}
                                             onChange={(e) => {
                                                 const newExp = [...experience];
-                                                newExp[index].endYear = e.target.value;
+                                                newExp[index].end_date = e.target.value;
                                                 setExperience(newExp);
                                             }}
                                             className="p-2 border border-gray-500 bg-[#121826] text-white rounded"
@@ -261,15 +342,16 @@ function Template() {
                         <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Education</h3>
                         {education.map((edu, index) => (
                             <div key={index}>
-                                <p className="font-semibold">{edu.course}</p>
-                                <p className="text-gray-600">{edu.institute} ({edu.startYear} - {edu.endYear})</p>
+                                <p className="font-semibold">{edu.degree}, {edu.field_of_study}</p>
+                                <p className="text-gray-600">{edu.institution} ({edu.start_date} - {edu.end_date})</p>
                             </div>
                         ))}
 
                         <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Experience</h3>
                         {experience.map((exp, index) => (
                             <div key={index}>
-                                <p className="text-gray-600">{exp.position} ({exp.startYear} - {exp.endYear})</p>
+                                
+                                <p className="text-gray-600"><h4 className="font-semibold inline-block text-black">{exp.role} - </h4> {exp.company} ({exp.start_date} - {exp.end_date})</p>
                                 <p>{exp.description}</p>
                             </div>
                         ))}

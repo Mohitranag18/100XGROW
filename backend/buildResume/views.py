@@ -1,102 +1,95 @@
-from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from linkedin_scraper import Person
-import time
+import json
+import re
+import google.generativeai as genai
+from pdfminer.high_level import extract_text
+from django.conf import settings
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
+from io import BytesIO
+import fitz  # PyMuPDF
 
-# Global WebDriver Variable (Persistent)
-driver = None
-is_logged_in = False  # Track login status
+# ✅ Initialize Gemini AI API Key at the start
+genai.configure(api_key=settings.GOOGLE_GEMINI_API_KEY)
 
-def initialize_driver():
-    """Initialize Selenium WebDriver globally"""
-    global driver
-    if driver is None or driver.session_id is None:
-        chrome_service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=chrome_service)
+def extract_text_from_pdf(pdf_file):
+    """Extract text from PDF using PyMuPDF."""
+    doc = fitz.open(stream=pdf_file, filetype="pdf")  # Load directly from BytesIO
+    text = "".join(page.get_text("text") for page in doc)
+    return text.strip()
 
-def wait_for_login():
-    """Wait until the user logs in manually"""
-    try:
-        WebDriverWait(driver, 100).until(
-            EC.url_contains("/feed") 
-        )
-        print("Login detected!")
-        return True
-    except Exception:
-        return False
+def analyze_resume_with_ai(resume_text):
+    """Analyze resume using Gemini AI and return structured JSON."""
 
-@api_view(['POST'])
-def scrape_linkedin_profile(request):
-    """
-    API endpoint to scrape a LinkedIn profile when requested.
-    """
-    global driver, is_logged_in
-
-    # Ensure WebDriver is initialized
-    initialize_driver()
-
-    # If session is lost, restart login process
-    if driver.session_id is None or not driver.get_cookies():
-        is_logged_in = False  # Reset login status
-        initialize_driver()  
-
-    # Open LinkedIn login page
-    driver.get("https://www.linkedin.com/login")
-    print("Please log in manually... Waiting for login detection.")
+    prompt = f"""
+    Analyze the following resume text and extract the information into a structured JSON format. 
+    The JSON should include:
+    - `name`: Full name of the candidate
+    - `headline`: Candidate’s professional headline
+    - `location`: City and country of the candidate
+    - `contact`: A dictionary with `phone`, `email`, and `LinkedIn` URL
+    - `skills`: A comprehensive list of top skills based on **entire resume text**, not just the "Skills" section.
+    - `languages`: A list of languages with proficiency levels
+    - `certifications`: A list of obtained certifications
+    - `summary`: The summary of the candidate
+    - `experience`: A list of past job roles with:
+        - `company`
+        - `role`
+        - `start_date`
+        - `end_date`
+        - `description` (Max **260 characters**. If longer, shorten while keeping key details.)
+    - `education`: A list of educational qualifications with:
+        - `institution`
+        - `degree`
+        - `field_of_study`
+        - `start_date`
+        - `end_date`
     
-    if not wait_for_login():
-        return JsonResponse({"error": "Login failed, please try again."}, status=401)
+    Resume Text:
+    {resume_text}
 
-    is_logged_in = True
-    print("Login successful! Ready to scrape.")
+    The extracted data should be returned in a well-formatted JSON object.
+    """
 
-    # Get LinkedIn username from request
-    linkedin_handle = request.data.get("username", None)
-    if not linkedin_handle:
-        return JsonResponse({"error": "Username is required"}, status=400)
+    model = genai.GenerativeModel("gemini-1.5-pro")
+    response = model.generate_content(prompt)
 
-    linkedin_url = f"https://www.linkedin.com/in/{linkedin_handle}"
-    print(f"Scraping LinkedIn profile: {linkedin_url}")
+    if not response or not response.text:
+        return {"error": "Empty AI response received."}
+
+    cleaned_response = re.sub(r"```json\n|\n```", "", response.text.strip())
 
     try:
-        # Scrape LinkedIn profile
-        person = Person(linkedin_url, driver=driver)
+        parsed_data = json.loads(cleaned_response)
 
-        # Structure scraped data
-        linkedin_data = {
-            "Name": person.name,
-            "About": person.about,
-            "Experiences": [
-                {
-                    "Institution": exp.institution_name,
-                    "Position": exp.position_title,
-                    "Duration": exp.duration,
-                    "Location": exp.location,
-                    "Description": exp.description,
-                    "LinkedIn URL": exp.linkedin_url
-                }
-                for exp in person.experiences
-            ],
-            "Educations": [
-                {
-                    "Institution": edu.institution_name,
-                    "Degree": edu.degree,
-                    "From": edu.from_date,
-                    "To": edu.to_date,
-                    "LinkedIn URL": edu.linkedin_url
-                }
-                for edu in person.educations
-            ],
-            "Current Job": f"{person.job_title} at {person.company}"
-        }
+        # ✅ Enforce 260-character limit for experience descriptions
+        if "experience" in parsed_data and isinstance(parsed_data["experience"], list):
+            for job in parsed_data["experience"]:
+                if "description" in job and isinstance(job["description"], str):
+                    job["description"] = job["description"][:257] + "..." if len(job["description"]) > 260 else job["description"]
 
-        return JsonResponse(linkedin_data, safe=False, status=200)
+        return parsed_data
+    except json.JSONDecodeError:
+        return {"error": "Failed to parse AI response as JSON."}
 
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])  # ✅ Corrected placement
+def get_linkedin_profile(request):
+    """API to analyze resume and return structured ATS analysis."""
+
+    pdf = request.FILES.get("resume")
+
+    if not pdf:
+        return Response({"error": "Please upload a resume"}, status=400)
+
+    try:
+        resume_text = extract_text_from_pdf(BytesIO(pdf.read()))
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        return Response({"error": f"Error reading PDF: {str(e)}"}, status=500)
+
+    if not resume_text:
+        return Response({"error": "Failed to extract text from resume"}, status=500)
+
+    parsed_result = analyze_resume_with_ai(resume_text)
+
+    return Response({"success": True, "data": parsed_result})

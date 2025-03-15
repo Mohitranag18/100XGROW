@@ -139,9 +139,10 @@ export const resume_detail = async (pk) => {
     }
 };
 
-export const scrape_linkedin_profile = async (username) => {
+export const get_linkedin_profile = async (resume) => {
     try {
-        const response = await axios.post(`${BASE_URL}scrape-linkedin/`, { username },{ withCredentials: true });
+        const response = await axios.post(`${BASE_URL}getLinkedinData/`, { resume }, {headers: {
+            "Content-Type": "multipart/form-data",}, withCredentials: true });
         return response.data; // Ensure only relevant data is returned
     } catch (error) {
         console.error("API Error:", error);
