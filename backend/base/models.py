@@ -2,24 +2,121 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
+
 class MyUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True, primary_key=True)
     bio = models.CharField(max_length=500)
     linkedinHandle = models.CharField(max_length=50, unique=True)
     instaHandle = models.CharField(max_length=50, unique=True)
-    profile_image =models.ImageField(upload_to='profile_images/', blank=True, null=True)
-    follower = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
-
-    def follower_count(self):
-        # Calculate and return the follower count, for example:
-        return self.follower.count() 
-
-    def following_count(self):
-        # Calculate and return the following count, for example:
-        return self.following.count()
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
 
     def __str__(self):
         return self.username
+
+
+class MyUserData(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE, related_name="user_data")
+    
+    full_name = models.CharField(max_length=100, blank=True)
+    short_description = models.TextField(blank=True)
+    contact_no = models.CharField(max_length=15, blank=True)
+    email = models.EmailField(unique=True)
+    address = models.TextField(blank=True)
+
+    availability = models.CharField(max_length=50, blank=True)
+    salary_expectations = models.CharField(max_length=50, blank=True)
+
+    # Skills
+    skills = models.JSONField(default=list)  # List of skills
+
+    # Achievements & Certifications
+    achievements_certifications = models.JSONField(default=list)  # List of achievements & certifications
+
+    # Interests
+    interests = models.JSONField(default=list)  # List of interests
+
+    # Self-Identification
+    gender_choices = [
+        ('Female', 'Female'),
+        ('Male', 'Male'),
+        ('Other', 'Other'),
+    ]
+    pronoun_choices = [
+        ('she/her', 'She/Her'),
+        ('he/him', 'He/Him'),
+        ('they/them', 'They/Them'),
+        ('Other', 'Other'),
+    ]
+    veteran_choices = [
+        ('No', 'No'),
+        ('Yes', 'Yes'),
+    ]
+    disability_choices = [
+        ('No', 'No'),
+        ('Yes', 'Yes'),
+    ]
+    ethnicity_choices = [
+        ('Asian', 'Asian'),
+        ('White', 'White'),
+        ('Black or African American', 'Black or African American'),
+        ('Hispanic or Latino', 'Hispanic or Latino'),
+        ('Other', 'Other'),
+    ]
+
+    gender = models.CharField(max_length=10, choices=gender_choices, default='Other')
+    pronouns = models.CharField(max_length=10, choices=pronoun_choices, default='Other')
+    veteran = models.CharField(max_length=3, choices=veteran_choices, default='No')
+    disability = models.CharField(max_length=3, choices=disability_choices, default='No')
+    ethnicity = models.CharField(max_length=30, choices=ethnicity_choices, default='Other')
+
+    # Work Preferences
+    work_preference_choices = [
+        ('No', 'No'),
+        ('Yes', 'Yes'),
+    ]
+    
+    remote_work = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+    in_person_work = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+    open_to_relocation = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+    willing_to_complete_assessments = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+    willing_to_undergo_drug_tests = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+    willing_to_undergo_background_checks = models.CharField(max_length=3, choices=work_preference_choices, default='No')
+
+    def __str__(self):
+        return f"{self.user.username}'s Data"
+    
+# Education
+class Education(models.Model):
+    user_data = models.ForeignKey('MyUserData', on_delete=models.CASCADE, related_name="education")
+    institution = models.CharField(max_length=200)
+    start_date = models.CharField(max_length=200)
+    end_date = models.CharField(max_length=200)
+    degree = models.CharField(max_length=200)
+    field_of_study = models.CharField(max_length=200)
+
+# Experience
+class Experience(models.Model):
+    user_data = models.ForeignKey('MyUserData', on_delete=models.CASCADE, related_name="experience")
+    company = models.CharField(max_length=200)
+    role = models.CharField(max_length=100)
+    description = models.TextField()
+    start_date = models.CharField(max_length=200)
+    end_date = models.CharField(max_length=200)
+
+# Projects
+class Project(models.Model):
+    user_data = models.ForeignKey('MyUserData', on_delete=models.CASCADE, related_name="projects")
+    project_name = models.CharField(max_length=200)
+    description = models.TextField()
+    project_link = models.URLField(blank=True)
+
+# Languages
+class Language(models.Model):
+    user_data = models.ForeignKey('MyUserData', on_delete=models.CASCADE, related_name="languages")
+    language = models.CharField(max_length=50)
+    proficiency = models.CharField(max_length=50)
+
+
 
 class Note(models.Model):
     description = models.CharField(max_length=300)

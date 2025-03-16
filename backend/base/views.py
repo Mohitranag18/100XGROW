@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import status
-from .models import MyUser
+from .models import MyUser, MyUserData, Education, Experience, Project, Language
 from .models import Note
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, MyUserDataSerializer, EducationSerializer, ExperienceSerializer, ProjectSerializer, LanguageSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -130,3 +130,62 @@ def get_user_profile_data(request, pk):
     except Exception as e:
         # Optionally, log the error for debugging purposes
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_my_user_data(request):
+    user_data = MyUserData.objects.filter(user=request.user).first()
+    if not user_data:
+        return Response({"error": "User data not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = MyUserDataSerializer(user_data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_my_user_data(request):
+    try:
+        user_data = MyUserData.objects.filter(user=request.user).first()
+        if not user_data:
+            user_data = MyUserData.objects.create(user=request.user)
+
+        # Update the main user profile details
+        serializer = MyUserDataSerializer(user_data, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Bulk fetch existing related objects
+        existing_edu = {edu.id: edu for edu in Education.objects.filter(user_data=user_data)}
+        existing_exp = {exp.id: exp for exp in Experience.objects.filter(user_data=user_data)}
+        existing_projects = {proj.id: proj for proj in Project.objects.filter(user_data=user_data)}
+        existing_langs = {lang.id: lang for lang in Language.objects.filter(user_data=user_data)}
+
+        # Helper function to handle updates/creation
+        def handle_nested_updates(model_dict, data_list, serializer_class):
+            for data in data_list:
+                data_id = data.get("id")
+                if data_id in model_dict:
+                    instance = model_dict[data_id]
+                    serializer = serializer_class(instance, data=data, partial=True)
+                else:
+                    data["user_data"] = user_data
+                    serializer = serializer_class(data=data)
+                
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Process nested updates
+        handle_nested_updates(existing_edu, request.data.get("education", []), EducationSerializer)
+        handle_nested_updates(existing_exp, request.data.get("experience", []), ExperienceSerializer)
+        handle_nested_updates(existing_projects, request.data.get("projects", []), ProjectSerializer)
+        handle_nested_updates(existing_langs, request.data.get("languages", []), LanguageSerializer)
+
+        return Response({"message": "User data updated successfully!"}, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
