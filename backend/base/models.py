@@ -5,6 +5,8 @@ from django.conf import settings
 class MyUser(AbstractUser):
     username = models.CharField(max_length=50, unique=True, primary_key=True)
     bio = models.CharField(max_length=500)
+    linkedinHandle = models.CharField(max_length=50, unique=True)
+    instaHandle = models.CharField(max_length=50, unique=True)
     profile_image =models.ImageField(upload_to='profile_images/', blank=True, null=True)
     follower = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
 

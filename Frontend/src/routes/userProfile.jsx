@@ -1,21 +1,33 @@
-import UserInfoProfile from "../components/UserInfoProfile"
+import { useState } from "react";
+import UserInfoProfile from "../components/userInfoProfile"
 import { FaInstagram } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 
-
-
-
 function UserProfile() {
+    const profileModes = ['userInfo', 'resumes', 'applicationsTracker']
+    const [profileMode, setProfileMode] = useState(profileModes[0])
+    const [resumeMode, setResumeMode] = useState('savedResumes')
+
     return (
         <div className="min-h-screen h-full w-full text-[#ffffff] bg-[#030712] border-b-2 border-[#1e2939] flex">
             <div className="w-56 min-w-56 border-r-2 border-[#1e2939]">
-                <div className="flex items-center p-4 py-2 text-lg font-semibold border-b-2 border-[#1e2939] bg-[#1e2939] hover:bg-[#1e2939]">User Info</div>
-                <div className="flex items-center p-4 py-2 text-lg font-semibold border-b-2 border-[#1e2939] hover:bg-[#1e2939]">Resumes</div>
-                <div className="flex items-center p-4 py-2 text-lg font-semibold border-b-2 border-[#1e2939] hover:bg-[#1e2939]">Applications Tracker</div>
+                {profileModes.map((mode, index) => (
+                    <div 
+                        key={index}
+                        className={`flex items-center p-4 py-2 text-lg font-semibold border-b-2 border-[#1e2939] cursor-pointer ${
+                            profileMode === mode ? "bg-gray-800" : ""
+                        } ${profileMode != mode ? "hover:bg-gray-900" : ""}`}
+                        onClick={() => setProfileMode(mode)}
+                    >
+                        {mode === "userInfo" && "User Info"}
+                        {mode === "resumes" && "Resumes"}
+                        {mode === "applicationsTracker" && "Applications Tracker"}
+                    </div>
+                ))}
             </div>
             <div className="h-full w-full">
-
                 {/* Profile Info */}
+                {profileMode === 'userInfo' &&
                 <div className="w-full">
                     <div className="h-112 w-full flex justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
                         <div className="h-36 w-36 rounded-full overflow-hidden">
@@ -35,7 +47,21 @@ function UserProfile() {
                         <UserInfoProfile />
                     </div>
                 </div>
+                }
 
+                {/* Resumes */}
+                {profileMode === 'resumes' &&
+                <div className="w-full">
+                    <div className="h-14 flex">
+                        <div onClick={() => setResumeMode("savedResumes")} className={`w-[50%] flex justify-center items-center border-b-2 border-r-1 border-[#1e2939] ${resumeMode === "savedResumes" ? "bg-gray-700" : ""} ${ resumeMode === "postedResumes" ? "hover:bg-gray-900" : "" }`}>
+                            <p className="text-lg font-semibold">Saved Resumes</p>
+                        </div>
+                        <div onClick={() => setResumeMode("postedResumes")} className={`w-[50%] flex justify-center items-center border-b-2 border-r-1 border-[#1e2939] ${resumeMode === "postedResumes" ? "bg-gray-700" : ""} ${ resumeMode === "savedResumes" ? "hover:bg-gray-900" : "" }`}>
+                            <p className="text-lg font-semibold">Posted Resumes</p>
+                        </div>
+                    </div>
+                </div>
+                }
             </div>
         </div>
     );
