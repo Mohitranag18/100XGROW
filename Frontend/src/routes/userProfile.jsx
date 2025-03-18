@@ -1,12 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserInfoProfile from "../components/userInfoProfile"
 import { FaInstagram } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
+import { get_user_profile_info } from "../api/endpoints";
+import { SERVER_URL } from "../api/endpoints";
 
 function UserProfile() {
     const profileModes = ['userInfo', 'resumes', 'applicationsTracker']
     const [profileMode, setProfileMode] = useState(profileModes[0])
     const [resumeMode, setResumeMode] = useState('savedResumes')
+
+    const [loading, setLoading] = useState(false)
+    const [username, setUsername] = useState('')
+    const [bio, setBio] = useState('')
+    const [linkedinId, setLinkedinId] = useState('')
+    const [instaId, setInstaId] = useState('')
+    const [profilePic, setProfilePic] = useState('')
+
+
+
+    const getUserData = async () => {
+        setLoading(true)
+        try{
+            const response = await get_user_profile_info()
+            console.log(response)
+            setUsername(response.username)
+            setBio(response.bio)
+            setLinkedinId(response.linkedinHandle)
+            setInstaId(response.instaHandle)
+            setProfilePic(response.profile_image)
+        }catch{
+            alert('error in fetching users data')
+        } finally{
+            setLoading(false)
+        }
+    }
+    useEffect(()=>{
+        getUserData()
+    },[])
 
     return (
         <div className="min-h-screen h-full w-full text-[#ffffff] bg-[#030712] border-b-2 border-[#1e2939] flex">
@@ -30,13 +61,13 @@ function UserProfile() {
                 {profileMode === 'userInfo' &&
                 <div className="w-full">
                     <div className="h-112 w-full flex justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
-                        <div className="h-36 w-36 rounded-full overflow-hidden">
-                            <img className="h-36 w-36 object-center object-cover" src="https://images.unsplash.com/photo-1662492953475-3aeae94525d9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE2MXx8fGVufDB8fHx8fA%3D%3D" alt="profile pic" />
+                        <div className="h-36 w-36 rounded-full border-2 border-white overflow-hidden">
+                            <img className="h-36 w-36 object-center object-cover" src={`${SERVER_URL}${profilePic}`} alt="profile pic" />
                         </div>
                         <div className="flex flex-col items-start justify-center w-136 gap-2 text-left">
-                            <h3 className="font-semibold text-xl">Alex Carter</h3>
-                            <h4>A passionate full-stack developer with a knack for crafting clean, efficient code, always eager to dive into new technologies and tackle complex problems</h4>
-                            <p><strong>Social Links : </strong> <br /> <FaLinkedinIn className="inline-block"/> @alex123 | <FaInstagram className="inline-block"/> @alex123</p>
+                            <h3 className="font-semibold text-xl">{`@${username}`}</h3>
+                            <h4>{bio}</h4>
+                            <p><strong>Social Links : </strong> <br /> <FaLinkedinIn className="inline-block"/> {`${linkedinId} | `}<FaInstagram className="inline-block"/> {instaId}</p>
                         </div>
                     </div>
                     <div className="w-full p-8">

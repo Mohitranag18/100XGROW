@@ -9,94 +9,6 @@ class MyUserProfileSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = ['username', 'bio', 'linkedinHandle', 'instaHandle', 'profile_image']
 
-# Education Serializer
-class EducationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Education
-        fields = '__all__'
-
-# Experience Serializer
-class ExperienceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Experience
-        fields = '__all__'
-
-# Project Serializer
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = '__all__'
-
-# Language Serializer
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = '__all__'
-
-# Main MyUserData Serializer
-class MyUserDataSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=MyUser.objects.all())
-
-    # Nested serializers (Make sure they support both read & write operations)
-    education = EducationSerializer(many=True, required=False)  
-    experience = ExperienceSerializer(many=True, required=False)  
-    projects = ProjectSerializer(many=True, required=False)  
-    languages = LanguageSerializer(many=True, required=False)  
-
-    class Meta:
-        model = MyUserData
-        fields = '__all__'
-
-    def create(self, validated_data):
-        """Handle nested creation for related objects"""
-        education_data = validated_data.pop('education', [])
-        experience_data = validated_data.pop('experience', [])
-        projects_data = validated_data.pop('projects', [])
-        languages_data = validated_data.pop('languages', [])
-
-        my_user_data = MyUserData.objects.create(**validated_data)
-
-        # Create related objects
-        for edu in education_data:
-            Education.objects.create(user_data=my_user_data, **edu)
-        for exp in experience_data:
-            Experience.objects.create(user_data=my_user_data, **exp)
-        for proj in projects_data:
-            Project.objects.create(user_data=my_user_data, **proj)
-        for lang in languages_data:
-            Language.objects.create(user_data=my_user_data, **lang)
-
-        return my_user_data
-
-    def update(self, instance, validated_data):
-        """Handle nested updates"""
-        education_data = validated_data.pop('education', [])
-        experience_data = validated_data.pop('experience', [])
-        projects_data = validated_data.pop('projects', [])
-        languages_data = validated_data.pop('languages', [])
-
-        # Update MyUserData fields
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-
-        # Update nested related objects (replace existing ones)
-        instance.education.all().delete()
-        instance.experience.all().delete()
-        instance.projects.all().delete()
-        instance.languages.all().delete()
-
-        for edu in education_data:
-            Education.objects.create(user_data=instance, **edu)
-        for exp in experience_data:
-            Experience.objects.create(user_data=instance, **exp)
-        for proj in projects_data:
-            Project.objects.create(user_data=instance, **proj)
-        for lang in languages_data:
-            Language.objects.create(user_data=instance, **lang)
-
-        return instance
-
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
@@ -116,3 +28,65 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ['id', 'description']
+
+
+
+class PersonalInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUserData
+        fields = '__all__'
+
+class EducationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Education
+        fields = '__all__'
+
+class ExperienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Experience
+        fields = '__all__'
+
+class ProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = '__all__'
+
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = '__all__'
+
+# Combined Serializer
+class UserCompleteDataSerializer(serializers.ModelSerializer):
+    education = EducationSerializer(many=True, required=False)
+    experience = ExperienceSerializer(many=True, required=False)
+    projects = ProjectSerializer(many=True, required=False)
+    languages = LanguageSerializer(many=True, required=False)
+
+    class Meta:
+        model = MyUserData
+        fields = '__all__'
+
+    def delete_and_create_related_objects(self, model, data_list, user_data):
+        # Delete all existing objects related to user_data
+        model.objects.filter(user_data=user_data).delete()
+
+        # Create new objects from the provided data
+        for data in data_list:
+            data.pop('user_data', None)  # Remove user_data to prevent conflicts
+            model.objects.create(user_data=user_data, **data)
+
+    def update(self, instance, validated_data):
+        # Update personal info fields
+        for attr, value in validated_data.items():
+            if attr not in ['education', 'experience', 'projects', 'languages']:
+                setattr(instance, attr, value)
+        instance.save()
+
+        # Delete and recreate nested models
+        self.delete_and_create_related_objects(Education, validated_data.get('education', []), instance)
+        self.delete_and_create_related_objects(Experience, validated_data.get('experience', []), instance)
+        self.delete_and_create_related_objects(Project, validated_data.get('projects', []), instance)
+        self.delete_and_create_related_objects(Language, validated_data.get('languages', []), instance)
+
+        return instance

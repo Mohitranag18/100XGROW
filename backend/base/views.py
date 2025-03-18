@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from .models import MyUser, MyUserData, Education, Experience, Project, Language
 from .models import Note
-from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, MyUserDataSerializer, EducationSerializer, ExperienceSerializer, ProjectSerializer, LanguageSerializer
+from .serializer import NoteSerializer, UserRegistrationSerializer, MyUserProfileSerializer, EducationSerializer, ExperienceSerializer, ProjectSerializer, LanguageSerializer, UserCompleteDataSerializer
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -116,25 +116,38 @@ def get_notes(request):
     serializer = NoteSerializer(notes, many=True)
     return Response(serializer.data)
 
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def get_user_profile_data(request, pk):
+#     try:
+#         user = MyUser.objects.get(username=pk)
+#     except MyUser.DoesNotExist:
+#         return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    
+#     try:
+#         serializer = MyUserProfileSerializer(user, many=False)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+#     except Exception as e:
+#         # Optionally, log the error for debugging purposes
+#         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_user_profile_data(request, pk):
+def get_user_profile_data(request):
     try:
-        user = MyUser.objects.get(username=pk)
-    except MyUser.DoesNotExist:
-        return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    
-    try:
+        user = request.user  # Get the authenticated user
         serializer = MyUserProfileSerializer(user, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
-        # Optionally, log the error for debugging purposes
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_my_user_data(request):
     user_data = MyUserData.objects.filter(user=request.user).first()
+    if not user_data:
+        return Response({"error": "User data not found"}, status=status.HTTP_404_NOT_FOUND)
+
     if not user_data:
         return Response({"error": "User data not found"}, status=status.HTTP_404_NOT_FOUND)
     
@@ -146,9 +159,7 @@ def get_my_user_data(request):
 @permission_classes([IsAuthenticated])
 def update_my_user_data(request):
     try:
-        user_data = MyUserData.objects.filter(user=request.user).first()
-        if not user_data:
-            user_data = MyUserData.objects.create(user=request.user)
+        user_data, _ = MyUserData.objects.get_or_create(user=request.user)
 
         # Update the main user profile details
         serializer = MyUserDataSerializer(user_data, data=request.data, partial=True)
@@ -189,3 +200,26 @@ def update_my_user_data(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([IsAuthenticated])
+def user_complete_data_view(request):
+    try:
+        user_data, created = MyUserData.objects.get_or_create(user=request.user)
+
+        if request.method == 'GET':
+            serializer = UserCompleteDataSerializer(user_data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        elif request.method == 'PUT':
+            serializer = UserCompleteDataSerializer(user_data, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "User data updated successfully!"}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    except Exception as e:
+        logger.error(f"Error in user_complete_data_view: {str(e)}")
+        return Response({"error": "An unexpected error occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -86,12 +86,12 @@ const api = axios.create({
     baseURL:BASE_URL,
     withCredentials:true
 })
-export const get_user_profile_info = async (username) => {
+export const get_user_profile_info = async () => {
     try{
-        const response = await api.get(`user_data/${username}/`, { withCredentials: true });
+        const response = await api.get(`user_data/`, { withCredentials: true });
         return response.data;
     }catch(error){
-        return call_refresh(error, () => api.get(`user_data/${username}/`, { withCredentials: true }));
+        return call_refresh(error, () => api.get(`user_data/`, { withCredentials: true }));
     }
 };
 
@@ -147,5 +147,23 @@ export const get_linkedin_profile = async (resume) => {
     } catch (error) {
         console.error("API Error:", error);
         return { error: error.message }; // Return a safe fallback object
+    }
+};
+
+export const get_my_user_data = async () => {
+    try{
+        const response = await api.get(`${BASE_URL}user-complete-data/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${BASE_URL}user-complete-data/`, { withCredentials: true }));
+    }
+};
+
+export const update_my_user_data = async (dataToUpdate) => {
+    try{
+        const response = await api.put(`${BASE_URL}user-complete-data/`, dataToUpdate , { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.put(`${BASE_URL}user-complete-data/`, dataToUpdate , { withCredentials: true }));
     }
 };

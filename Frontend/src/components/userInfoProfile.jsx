@@ -1,8 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { PlusCircle, UploadCloud, ChevronDown } from "lucide-react";
+import { get_my_user_data, get_linkedin_profile, update_my_user_data } from "../api/endpoints";
 
 export default function UserInfoProfile() {
+    const cleanData = (data) => {
+        return data.map(item => {
+          const cleanedItem = { ...item };
+      
+          // Remove user_data if it's null, undefined, or empty
+          if (!cleanedItem.user_data) {
+            delete cleanedItem.user_data;
+          }
+      
+          // Remove id if it's null, undefined, or empty
+          if (!cleanedItem.id) {
+            delete cleanedItem.id;
+          }
+      
+          return cleanedItem;
+        });
+      };
+      
+      
     const [personalInfoVisible, setPersonalInfoVisible] = useState(false);
     const [educationVisible, setEducationVisible] = useState(false);
     const [experienceVisible, setExperienceVisible] = useState(false);
@@ -16,13 +36,15 @@ export default function UserInfoProfile() {
     const [selfIdVisible, setSelfIdVisible] = useState(false);
     const [workPrefVisible, setWorkPrefVisible] = useState(false);
 
-    
+    const [loading, setLoading] = useState(false)
+    const [updating, setUpdating] = useState(false)
+    const [selectedFile, setSelectedFile] = useState(null);
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [contactNum, setContactNum] = useState('');
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
-
     const [education, setEducation] = useState([]);
     const [experience, setExperience] = useState([]);
     const [projects, setProjects] = useState([]);
@@ -35,29 +57,65 @@ export default function UserInfoProfile() {
     const [selfId, setSelfId] = useState({ gender: "Female", pronouns: "she/her", veteran: "No", disability: "No", ethnicity: "Asian",})
     const [workPref, setWorkPref] = useState({ remote_work: "No", in_person_work: "No", open_to_relocation: "No", willing_to_complete_assessments: "No", willing_to_undergo_drug_tests: "No", willing_to_undergo_background_checks: "No"})
 
+    const [dataToUpdate, setDataToUpdate] = useState({})
+    useEffect(() => {
+        setDataToUpdate({
+          education: cleanData(education),
+          experience: cleanData(experience),
+          projects: cleanData(projects),
+          languages: cleanData(languages),
+          full_name: name,
+          short_description: description,
+          contact_no: contactNum,
+          email: email,
+          address: address,
+          availability: availability,
+          salary_expectations: salaryExp,
+          skills: skills,
+          achievements_certifications: achievements,
+          interests: interests,
+          gender: selfId.gender,
+          pronouns: selfId.pronouns,
+          veteran: selfId.veteran,
+          disability: selfId.disability,
+          ethnicity: selfId.ethnicity,
+          remote_work: workPref.remote_work,
+          in_person_work: workPref.in_person_work,
+          open_to_relocation: workPref.open_to_relocation,
+          willing_to_complete_assessments: workPref.willing_to_complete_assessments,
+          willing_to_undergo_drug_tests: workPref.willing_to_undergo_drug_tests,
+          willing_to_undergo_background_checks: workPref.willing_to_undergo_background_checks,
+        });
+      }, [education, experience, projects, languages, name, description, contactNum, email, address, availability, salaryExp, skills, achievements, interests, selfId, workPref]);
+      
+    console.log(JSON.stringify(dataToUpdate))
 
     const handleEducationAdd = () => {
         setEducation([...education, {
+            id: '',
             institution: '', 
             degree: '', 
             field_of_study: '', 
             start_date: '', 
-            end_date: ''
+            end_date: '',
+            user_data: ''
         }]);
     };
 
     const handleExperienceAdd = () => {
         setExperience([...experience, {
+            id: '',
             company: '',
             role: '',
             start_date: '',
             end_date: '',
-            description: ''
+            description: '',
+            user_data: ''
         },]);
     };
 
     const handleProjectAdd = () => {
-        setProjects([...projects, { name: '', description: '', link: '' }]);
+        setProjects([...projects, { id: '', name: '', description: '', link: '', user_data: '' }]);
     };
 
     const handleSkillChange = (e) => {
@@ -69,7 +127,7 @@ export default function UserInfoProfile() {
     };
 
     const handleLanguagesAdd = () => {
-      setLanguages([...languages, { language: '', proficiency: '' }]);
+      setLanguages([...languages, { id: '', language: '', proficiency: '', user_data: '' }]);
     };
 
     const handleInterestsAdd = () => {
@@ -84,8 +142,130 @@ export default function UserInfoProfile() {
         setWorkPref({...workPref, [e.target.name]: e.target.value,});
     };
 
+    // get my user detaild data
+    const getMyUserData = async () => {
+        try{
+            const response = await get_my_user_data()
+            console.log(response)
+            setName(response.full_name)
+            setDescription(response.short_description)
+            setContactNum(response.contact_no)
+            setEmail(response.email)
+            setAddress(response.address)
+            setEducation(response.education)
+            setExperience(response.experience)
+            setProjects(response.projects)
+            setLanguages(response.languages)
+            setSkills(response.skills)
+            setAchievements(response.achievements_certifications)
+            setInterests(response.interests)
+            setAvailability(response.availability)
+            setSalaryExp(response.salary_expectations)
+            setSelfId({ gender: response.gender, pronouns: response.pronouns, veteran: response.veteran, disability: response.disability, ethnicity: response.ethnicity,})
+            setWorkPref({ remote_work: response.remote_work, in_person_work: response.in_person_work, open_to_relocation: response.open_to_relocation, willing_to_complete_assessments: response.willing_to_complete_assessments, willing_to_undergo_drug_tests: response.willing_to_undergo_drug_tests, willing_to_undergo_background_checks: response.willing_to_undergo_background_checks})
+        }catch{
+            alert('error in fetching users data')
+        }
+    }
+
+    useEffect(()=>{
+        getMyUserData()
+    },[])
+
+    // get data from users linkeding pdf
+    const getLinkedinProfileData = async () => {
+        setLoading(true)
+        try{
+            const response = await get_linkedin_profile(selectedFile)
+            console.log(response)
+            if(response.success){
+                setName(response.data.name)
+                setDescription(response.data.headline)
+                setContactNum(response.data.contact.phone)
+                setEmail(response.data.contact.email)
+                setAddress(response.data.location)
+                setEducation(response.data.education)
+                setExperience(response.data.experience)
+                setSkills(response.data.skills)
+                setAchievements(response.data.certifications)
+                setLanguages(response.data.languages)
+                alert("data fetched from linkedin");
+            }
+            else{
+                alert(response.error)
+            }
+        }catch{
+            alert('error in geting data from linkedin profile')
+        } finally{
+            setLoading(false)
+            setSelectedFile(null)
+        }
+    }
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) setSelectedFile(file);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file) setSelectedFile(file);
+    };
+
+    // update users detaild data
+    const updateMyUserData = async () => {
+        setUpdating(true)
+        try{
+            const response = await update_my_user_data(dataToUpdate)
+            console.log(response)
+            alert(response.message)
+        }catch{
+            alert('error in geting data updating')
+        }finally{
+            setUpdating(false)
+        }
+    }
+
   return (
     <div className="w-full mx-auto bg-[#030712] text-white shadow-lg rounded-lg flex flex-col items-center ">
+    
+    <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
+        <div className="w-full flex flex-wrap justify-center items-center gap-x-12 gap-y-8 py-4">
+            <div className="h-fit flex flex-col gap-2">
+                <div
+                    className="h-30 w-96 flex flex-col justify-center items-center border-2 border-dashed bg-[#030712] border-gray-400 p-6 text-center rounded-lg cursor-pointer hover:bg-[#1e2939]"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleDrop}
+                >
+                    <label htmlFor="file-upload" className="cursor-pointer">
+                    <UploadCloud className="mx-auto text-gray-500 mb-2" size={32} />
+                    <p className="text-gray-500">Drag & drop your file here</p>
+                    <p className="text-gray-400 text-sm">or click to browse</p>
+                    </label>
+                    <input
+                    type="file"
+                    id="file-upload"
+                    className="hidden"
+                    onChange={handleFileChange}
+                    accept=".pdf"
+                    />
+                </div>
+                {selectedFile && (
+                    <p className="mt-2 text-sm text-green-600 text-center">
+                    {selectedFile.name} selected
+                    </p>
+                )}
+            </div>
+            <div className="h-fit flex justify-center items-center gap-8">
+                <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-3 py-3 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+            </div>
+            <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
+        </div>
+        {loading && 
+            <p>Getting Data from linkedin profile.....</p>
+        }
+    </div>
       
       <div className="w-[80%] text-[#ffffff] bg-[#030712] p-8">
         <form className="flex flex-col gap-4">
@@ -388,40 +568,40 @@ export default function UserInfoProfile() {
           {selfIdVisible && (
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="gender">Gender:</label>
+                  <label htmlFor="gender">Gender:</label>
                   <select onChange={handleSelfIdAdd} value={selfId.gender} className="bg-[#121826] text-white w-[30%]" name="gender" required>
-                      <option value="Female" selected>Female</option>
+                      <option value="Female">Female</option>
                       <option value="Male">Male</option>
                       <option value="Other">Other</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="pronouns">Pronouns:</label>
+                  <label htmlFor="pronouns">Pronouns:</label>
                   <select onChange={handleSelfIdAdd} value={selfId.pronouns} className="bg-[#121826] text-white w-[30%]" name="pronouns" required>
-                      <option value="she/her" selected>She/Her</option>
+                      <option value="she/her">She/Her</option>
                       <option value="he/him">He/Him</option>
                       <option value="they/them">They/Them</option>
                       <option value="other">Other</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="veteran">Veteran Status:</label>
+                  <label htmlFor="veteran">Veteran Status:</label>
                   <select onChange={handleSelfIdAdd} value={selfId.veteran} className="bg-[#121826] text-white w-[30%]" name="veteran" required>
-                      <option value="No" selected>No</option>
+                      <option value="No">No</option>
                       <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="disability">Disability:</label>
+                  <label htmlFor="disability">Disability:</label>
                   <select onChange={handleSelfIdAdd} value={selfId.disability} className="bg-[#121826] text-white w-[30%]" name="disability" required>
-                      <option value="No" selected>No</option>
+                      <option value="No">No</option>
                       <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="ethnicity">Ethnicity:</label>
+                  <label htmlFor="ethnicity">Ethnicity:</label>
                   <select onChange={handleSelfIdAdd} value={selfId.ethnicity} className="bg-[#121826] text-white w-[30%]" name="ethnicity" required>
-                      <option value="Asian" selected>Asian</option>
+                      <option value="Asian">Asian</option>
                       <option value="White">White</option>
                       <option value="Black or African American">Black or African American</option>
                       <option value="Hispanic or Latino">Hispanic or Latino</option>
@@ -439,44 +619,44 @@ export default function UserInfoProfile() {
           {workPrefVisible && (
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="remote_work">Remote Work:</label>
+                  <label htmlFor="remote_work">Remote Work:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.remote_work} className="bg-[#121826] text-white w-[30%]" name="remote_work" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="in_person_work">In Person Work:</label>
+                  <label htmlFor="in_person_work">In Person Work:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.in_person_work} className="bg-[#121826] text-white w-[30%]" name="in_person_work" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="open_to_relocation">Open To Relocation:</label>
+                  <label htmlFor="open_to_relocation">Open To Relocation:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.open_to_relocation} className="bg-[#121826] text-white w-[30%]" name="open_to_relocation" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="willing_to_complete_assessments">Willing To Complete Assessments:</label>
+                  <label htmlFor="willing_to_complete_assessments">Willing To Complete Assessments:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.willing_to_complete_assessments} className="bg-[#121826] text-white w-[30%]" name="willing_to_complete_assessments" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="willing_to_undergo_drug_tests">Willing To Undergo Drug Tests:</label>
+                  <label htmlFor="willing_to_undergo_drug_tests">Willing To Undergo Drug Tests:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.willing_to_undergo_drug_tests} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_drug_tests" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label for="willing_to_undergo_background_checks">Willing To Undergo Background Checks:</label>
+                  <label htmlFor="willing_to_undergo_background_checks">Willing To Undergo Background Checks:</label>
                   <select onChange={handleWorkPrefAdd} value={selfId.willing_to_undergo_background_checks} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_background_checks" required>
-                    <option value="No" selected>No</option>
+                    <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
                 </div>
@@ -487,9 +667,12 @@ export default function UserInfoProfile() {
       </div>
 
       {/* Submit Button */}
-      <button className="w-86 bg-blue-600 text-white py-2 mt-8 rounded-lg hover:bg-blue-700">
-        Submit
+      <button onClick={updateMyUserData} className="w-86 bg-blue-600 text-white py-2 mt-8 rounded-lg hover:bg-blue-700">
+        Update Data
       </button>
+      {updating && 
+        <p>Updating User's Data</p>
+      }
     </div>
   );
 }

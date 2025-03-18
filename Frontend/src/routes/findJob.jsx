@@ -16,8 +16,8 @@ function FindJob() {
             {/* panel 2 */}
             <div className=" w-full text-[#ffffff] bg-[#030712] border-b-2 border-[#1e2939] flex flex-col p-6 py-16 items-center">
                 <h2 className="text-4xl font-semibold flex justify-center w-290">User Information Form</h2>
-                <div className="w-290 h-16 flex justify-end items-center my-8 p-2 rounded-2xl border-2 border-[#1e2939] ">
-                    <button className="font-semibold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition">Get Data from Profile</button>
+                <div className="w-290 h-16 flex justify-center items-center my-8 p-2 ">
+                   <p><strong>Note: </strong>By Default we are filling Information with your Profile Data, you can do changes in your data Manually as well.</p>
                 </div>
                 <div className="w-290">
                 <UserInfoForm />

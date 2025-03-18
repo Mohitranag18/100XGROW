@@ -13,7 +13,7 @@ class MyUser(AbstractUser):
     def __str__(self):
         return self.username
 
-
+# Personal Info
 class MyUserData(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE, related_name="user_data")
     
@@ -106,9 +106,9 @@ class Experience(models.Model):
 # Projects
 class Project(models.Model):
     user_data = models.ForeignKey('MyUserData', on_delete=models.CASCADE, related_name="projects")
-    project_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     description = models.TextField()
-    project_link = models.URLField(blank=True)
+    link = models.URLField(blank=True)
 
 # Languages
 class Language(models.Model):
@@ -117,8 +117,6 @@ class Language(models.Model):
     proficiency = models.CharField(max_length=50)
 
 
-
 class Note(models.Model):
     description = models.CharField(max_length=300)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='note')
-
