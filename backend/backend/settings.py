@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'magicATS',
     'rateMyResume',
     'buildResume',
+    'findJob',
     'django_htmx', #for temp
 ]
 
