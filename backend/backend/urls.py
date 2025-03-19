@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/',include('base.urls')),
     path('api/',include('magicATS.urls')),
     path('api/',include('rateMyResume.urls')),
-    path('api/',include('buildResume.urls'))
+    path('api/',include('buildResume.urls')),
+    path('api/',include('findJob.urls'))
 ]

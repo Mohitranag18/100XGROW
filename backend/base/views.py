@@ -93,10 +93,9 @@ def logout(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def is_authenticated(request):
-    return Response({'authenticated':True})
-
+    return Response({'authenticated': request.user.is_authenticated})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -104,8 +103,8 @@ def register(request):
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

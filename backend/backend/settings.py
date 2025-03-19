@@ -72,7 +72,7 @@ REST_FRAMEWORK = {
         'base.authentication.CookiesJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
 }
 

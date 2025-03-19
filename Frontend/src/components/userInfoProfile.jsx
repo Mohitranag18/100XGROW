@@ -230,37 +230,24 @@ export default function UserInfoProfile() {
   return (
     <div className="w-full mx-auto bg-[#030712] text-white shadow-lg rounded-lg flex flex-col items-center ">
     
-    <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
-        <div className="w-full flex flex-wrap justify-center items-center gap-x-12 gap-y-8 py-4">
-            <div className="h-fit flex flex-col gap-2">
-                <div
-                    className="h-30 w-96 flex flex-col justify-center items-center border-2 border-dashed bg-[#030712] border-gray-400 p-6 text-center rounded-lg cursor-pointer hover:bg-[#1e2939]"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={handleDrop}
-                >
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                    <UploadCloud className="mx-auto text-gray-500 mb-2" size={32} />
-                    <p className="text-gray-500">Drag & drop your file here</p>
-                    <p className="text-gray-400 text-sm">or click to browse</p>
-                    </label>
-                    <input
-                    type="file"
-                    id="file-upload"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    accept=".pdf"
-                    />
+    {/* panel 1 */}
+    <div className="w-full flex flex-col justify-center items-center text-center gap-16 p-6 border-b-2 border-[#1e2939]">
+        <div className="flex justify-center items-center gap-10">
+            <div className="h-40 flex flex-wrap justify-center items-center gap-x-6 py-4 border-1 border-gray-400 rounded-2xl">
+                <div className="h-fit flex flex-col gap-2">
+                        <input type="file" onChange={handleFileChange}
+                        accept=".pdf" placeholder="Add your Linkedin Profile PDf" className="p-2 border border-gray-500 bg-[#121826] text-white rounded"/>
+                    {selectedFile && (
+                        <p className="mt-2 text-sm text-green-600 text-center">
+                        {selectedFile.name} selected
+                        </p>
+                    )}
                 </div>
-                {selectedFile && (
-                    <p className="mt-2 text-sm text-green-600 text-center">
-                    {selectedFile.name} selected
-                    </p>
-                )}
+                <div className="h-fit flex justify-center items-center gap-8">
+                    <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-2 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+                </div>
+                <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
             </div>
-            <div className="h-fit flex justify-center items-center gap-8">
-                <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-3 py-3 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
-            </div>
-            <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
         </div>
         {loading && 
             <p>Getting Data from linkedin profile.....</p>

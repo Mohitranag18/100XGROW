@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { get_linkedin_profile } from "../api/endpoints";
+import { get_linkedin_profile, get_my_user_data } from "../api/endpoints";
 import { UploadCloud } from "lucide-react";
 
 function Template() {
@@ -90,6 +90,25 @@ function Template() {
         if (file) setSelectedFile(file);
     };
 
+    // get my user detaild data
+    const getMyUserData = async () => {
+        try{
+            const response = await get_my_user_data()
+            console.log(response)
+            setName(response.full_name)
+            setDescription(response.short_description)
+            setContactNum(response.contact_no)
+            setEmail(response.email)
+            setAddress(response.address)
+            setEducation(response.education)
+            setExperience(response.experience)
+            setProjects(response.projects)
+            setSkills(response.skills)
+        }catch{
+            alert('error in fetching users data')
+        }
+    }
+
     return ( 
         <>
         <div className="h-full w-full text-[#ffffff] bg-[#030712]">
@@ -98,36 +117,25 @@ function Template() {
                 <div className="flex flex-col gap-8">
                     <h1 className="text-5xl font-bold">Template 1</h1>
                 </div>
-                <div className="w-full flex flex-wrap justify-center items-center gap-x-12 gap-y-8 py-4">
-                    <div className="h-fit flex flex-col gap-2">
-                        <div
-                            className="h-30 w-96 flex flex-col justify-center items-center border-2 border-dashed bg-[#030712] border-gray-400 p-6 text-center rounded-lg cursor-pointer hover:bg-[#1e2939]"
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={handleDrop}
-                        >
-                            <label htmlFor="file-upload" className="cursor-pointer">
-                            <UploadCloud className="mx-auto text-gray-500 mb-2" size={32} />
-                            <p className="text-gray-500">Drag & drop your file here</p>
-                            <p className="text-gray-400 text-sm">or click to browse</p>
-                            </label>
-                            <input
-                            type="file"
-                            id="file-upload"
-                            className="hidden"
-                            onChange={handleFileChange}
-                            accept=".pdf"
-                            />
+                <div className="flex justify-center items-center gap-10">
+                    <div className="w-[45%] h-40 flex flex-wrap justify-center items-center gap-x-6 py-4 border-1 border-gray-400 rounded-2xl">
+                        <div className="h-fit flex flex-col gap-2">
+                                <input type="file" onChange={handleFileChange}
+                                accept=".pdf" placeholder="Add your Linkedin Profile PDf" className="p-2 border border-gray-500 bg-[#121826] text-white rounded"/>
+                            {selectedFile && (
+                                <p className="mt-2 text-sm text-green-600 text-center">
+                                {selectedFile.name} selected
+                                </p>
+                            )}
                         </div>
-                        {selectedFile && (
-                            <p className="mt-2 text-sm text-green-600 text-center">
-                            {selectedFile.name} selected
-                            </p>
-                        )}
+                        <div className="h-fit flex justify-center items-center gap-8">
+                            <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-2 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+                        </div>
+                        <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
                     </div>
-                    <div className="h-fit flex justify-center items-center gap-8">
-                        <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-3 py-3 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+                    <div className="w-[45%] h-full flex flex-col justify-center items-center gap-8 border-1 border-gray-400 rounded-2xl">
+                        <div onClick={getMyUserData} className="bg-red-700 hover:bg-red-600 p-2 rounded-sm cursor-pointer">Get Data from 100XGROW profile</div>
                     </div>
-                    <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
                 </div>
                 {loading && 
                     <p>Getting Data from linkedin profile.....</p>

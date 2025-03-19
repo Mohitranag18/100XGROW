@@ -4,6 +4,7 @@ import { FaInstagram } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 import { get_user_profile_info } from "../api/endpoints";
 import { SERVER_URL } from "../api/endpoints";
+import PostedResumeList from "../components/PostedResumeList";
 
 function UserProfile() {
     const profileModes = ['userInfo', 'resumes', 'applicationsTracker']
@@ -91,6 +92,10 @@ function UserProfile() {
                             <p className="text-lg font-semibold">Posted Resumes</p>
                         </div>
                     </div>
+                    {
+                        resumeMode === "postedResumes" &&
+                        <PostedResumeList username={username}/>
+                    }
                 </div>
                 }
             </div>

@@ -69,9 +69,19 @@ export const logout = async () => {
 };
 
 export const register = async (username, email, password) => {
-    const response = await axios.post(REGISTER_URL, {username, email, password}, { withCredentials: true });
-    return response.data;
-};
+    try {
+      const response = await axios.post(
+        REGISTER_URL, 
+        { username, email, password },
+        { withCredentials: false }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Registration error:", error?.response?.data || error.message);
+      throw error;
+    }
+  };
+  
 
 export const authenticated_user = async () => {
     try{
