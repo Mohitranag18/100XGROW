@@ -2,6 +2,15 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { get_linkedin_profile, get_my_user_data } from "../api/endpoints";
 import { UploadCloud } from "lucide-react";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { IoBookmarkOutline } from "react-icons/io5";
+import { IoIosCall } from "react-icons/io";
+import { MdOutlineAttachEmail } from "react-icons/md";
+import { IoIosMail } from "react-icons/io";
+import { FaLocationDot } from "react-icons/fa6";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+
 
 function Template() {
     const [loading, setLoading] = useState(false)
@@ -109,6 +118,21 @@ function Template() {
         }
     }
 
+    const downloadPDF = () => {
+        const input = document.getElementById('pdf-content');
+        html2canvas(input, { scale: 2 }).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF('p', 'mm', 'a4');
+    
+          // Calculate image size to fit in A4
+          const imgWidth = 210;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+          pdf.save('resume.pdf');
+        });
+      };
+
     return ( 
         <>
         <div className="h-full w-full text-[#ffffff] bg-[#030712]">
@@ -129,12 +153,12 @@ function Template() {
                             )}
                         </div>
                         <div className="h-fit flex justify-center items-center gap-8">
-                            <div onClick={getLinkedinProfileData} className="bg-blue-700 hover:bg-blue-600 p-2 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
+                            <div onClick={getLinkedinProfileData} className="bg-blue-600 hover:bg-blue-700 p-2 rounded-sm cursor-pointer">Get Data From Linkedin PDF</div>
                         </div>
                         <p className="w-full text-gray-200">Don't Know how to get your Linkedin Profile PDF, <a className="text-blue-500" href="">click here</a></p>
                     </div>
                     <div className="w-[45%] h-full flex flex-col justify-center items-center gap-8 border-1 border-gray-400 rounded-2xl">
-                        <div onClick={getMyUserData} className="bg-red-700 hover:bg-red-600 p-2 rounded-sm cursor-pointer">Get Data from 100XGROW profile</div>
+                        <div onClick={getMyUserData} className="bg-red-600 hover:bg-red-700 p-2 rounded-sm cursor-pointer">Get Data from 100XGROW profile</div>
                     </div>
                 </div>
                 {loading && 
@@ -338,47 +362,76 @@ function Template() {
 
                 {/* right */}
                 <div className="text-[#ffffff] bg-[#030712] flex justify-center items-center w-[60%] p-8">
-                    <div className="h-238 w-168 bg-white text-black p-2">
-                        <div className="w-[100%] flex justify-evenly items-start my-2">
-                            <p className="max-w-[25%] font-semibold text-blue-700 flex flex-wrap">{contactNum}</p>
-                            <p className="max-w-[40%] font-semibold text-blue-700 flex flex-wrap underline"><a href={`mailto:${email}`}>{email}</a></p>
-                            <p className="max-w-[35%] font-semibold text-blue-700 flex flex-wrap">{address}</p>
+                    <div id="pdf-content" className="h-238 w-168 bg-[#ffffff] text-[#000000] p-2">
+                        <div className="w-full flex justify-evenly items-start my-2">
+                        {contactNum !== "" && (
+                            <p className="max-w-[25%] font-semibold text-[#1d4ed8] flex flex-wrap justify-center items-center gap-1">
+                            <IoIosCall className="text-lg" />
+                            {contactNum}
+                            </p>
+                        )}
+                        {email !== "" && (
+                            <p className="max-w-[35%] font-semibold text-[#1d4ed8] flex flex-wrap underline justify-center items-center gap-1">
+                            <IoIosMail className="text-2xl pt-1" />
+                            <a href={`mailto:${email}`}>{email}</a>
+                            </p>
+                        )}
+                        {contactNum !== "" && (
+                            <p className="max-w-[40%] font-semibold text-[#1d4ed8] flex flex-wrap justify-center items-center gap-1">
+                            <FaLocationDot className="text-sm" />
+                            {address}
+                            </p>
+                        )}
                         </div>
                         <h2 className="text-2xl font-bold">{name}</h2>
-                        <p className="text-gray-700 mb-2">{description}</p>
+                        <p className="text-[#4b5563] mb-2">{description}</p>
 
-                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Education</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-[#4b5563] mb-1">Education</h3>
                         {education.map((edu, index) => (
-                            <div key={index}>
-                                <p className="font-semibold">{edu.degree}, {edu.field_of_study}</p>
-                                <p className="text-gray-600">{edu.institution} ({edu.start_date} - {edu.end_date})</p>
-                            </div>
+                        <div key={index}>
+                            <p className="font-semibold">{edu.degree}, {edu.field_of_study}</p>
+                            <p className="text-[#4b5563]">{edu.institution} ({edu.start_date} - {edu.end_date})</p>
+                        </div>
                         ))}
 
-                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Experience</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-[#4b5563] mb-1">Experience</h3>
                         {experience.map((exp, index) => (
-                            <div key={index}>
-                                
-                                <p className="text-gray-600"><h4 className="font-semibold inline-block text-black">{exp.role} - </h4> {exp.company} ({exp.start_date} - {exp.end_date})</p>
-                                <p>{exp.description}</p>
-                            </div>
+                        <div key={index}>
+                            <p className="text-[#4b5563]">
+                            <h4 className="font-semibold inline-block text-[#000000]">{exp.role} - </h4>
+                            {exp.company} ({exp.start_date} - {exp.end_date})
+                            </p>
+                            <p>{exp.description}</p>
+                        </div>
                         ))}
 
-                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Projects</h3>
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-[#4b5563] mb-1">Projects</h3>
                         {projects.map((proj, index) => (
-                            <div key={index}>
-                                <p className="text-blue-600 underline font-semibold">
-                                <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.name}</a>
-                                </p>
-                                <p>{proj.description}</p>
-                            </div>
+                        <div key={index}>
+                            <p className="text-[#2563eb] underline font-semibold">
+                            <a href={proj.link} target="_blank" rel="noopener noreferrer">{proj.name}</a>
+                            </p>
+                            <p>{proj.description}</p>
+                        </div>
                         ))}
-                        <h3 className="text-xl font-semibold w-full border-b-2 border-gray-700 mb-1">Skills</h3>
+
+                        <h3 className="text-xl font-semibold w-full border-b-2 border-[#4b5563] mb-1">Skills</h3>
                         {skills.map((skill, index) => (
-                            <p className="inline-block m-1 bg-gray-300 px-1 rounded-sm" key={index}>{skill}</p>
+                        <p className="inline-block m-1 bg-[#d1d5db] px-1 rounded-sm" key={index}>{skill}</p>
                         ))}
                     </div>
                 </div>
+            </div>
+
+            <div className="flex justify-center gap-16">
+                <button onClick={downloadPDF} className="w-86 flex justify-center items-center gap-2 bg-blue-600 text-white py-2 mt-8 rounded-lg hover:bg-blue-700 cursor-pointer">
+                    <MdOutlineFileDownload className="text-xl" />
+                    Download
+                </button>
+                <button className="w-86 flex justify-center items-center gap-2 bg-red-600 text-white py-2 mt-8 rounded-lg hover:bg-red-700 cursor-pointer">
+                    <IoBookmarkOutline className="text-xl" />
+                    Save
+                </button>
             </div>
         </div>
         </>

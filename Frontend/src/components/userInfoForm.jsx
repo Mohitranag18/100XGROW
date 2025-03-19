@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { PlusCircle, UploadCloud, ChevronDown } from "lucide-react";
-import { get_my_user_data } from "../api/endpoints";
+import { get_all_jobs, get_my_user_data, match_jobs } from "../api/endpoints";
 
-export default function UserInfoProfile() {
+export default function UserInfoProfile({bestJobs, setBestJobs}) {
+    const [allJobs, setAllJobs] = useState({})
+    // const [bestJobs, setBestJobs] = useState([])
+    const [UpdatedData, setUpdatedData] = useState({})
+    const [matchingJobs, setMatchingJobs] = useState(false)
+
+
     const [personalInfoVisible, setPersonalInfoVisible] = useState(false);
     const [educationVisible, setEducationVisible] = useState(false);
     const [experienceVisible, setExperienceVisible] = useState(false);
@@ -111,9 +117,65 @@ export default function UserInfoProfile() {
         }
     }
 
+    const getAllJobs = async () => {
+        try{
+            const response = await get_all_jobs()
+            console.log(response)
+            setAllJobs(response)
+        }catch{
+            alert('error in fetching all jobs')
+        }
+    }
+
     useEffect(()=>{
         getMyUserData()
+        getAllJobs()
     },[])
+
+    useEffect(() => {
+        setUpdatedData({
+          education: education,
+          experience: experience,
+          projects: projects,
+          languages: languages,
+          full_name: name,
+          short_description: description,
+          contact_no: contactNum,
+          email: email,
+          address: address,
+          availability: availability,
+          salary_expectations: salaryExp,
+          skills: skills,
+          achievements_certifications: achievements,
+          interests: interests,
+          gender: selfId.gender,
+          pronouns: selfId.pronouns,
+          veteran: selfId.veteran,
+          disability: selfId.disability,
+          ethnicity: selfId.ethnicity,
+          remote_work: workPref.remote_work,
+          in_person_work: workPref.in_person_work,
+          open_to_relocation: workPref.open_to_relocation,
+          willing_to_complete_assessments: workPref.willing_to_complete_assessments,
+          willing_to_undergo_drug_tests: workPref.willing_to_undergo_drug_tests,
+          willing_to_undergo_background_checks: workPref.willing_to_undergo_background_checks,
+        });
+      }, [education, experience, projects, languages, name, description, contactNum, email, address, availability, salaryExp, skills, achievements, interests, selfId, workPref]);
+      
+    console.log(JSON.stringify(UpdatedData))
+
+    const matchJobs = async () => {
+        setMatchingJobs(true)
+        try{
+            const response = await match_jobs(UpdatedData, allJobs)
+            console.log(response)
+            setBestJobs(response.data)
+        }catch{
+            alert('error in matching jobs')
+        }finally{
+            setMatchingJobs(false)
+        }
+    }
 
   return (
     <div className="w-full mx-auto bg-[#030712] text-white shadow-lg rounded-lg flex flex-col items-center ">
@@ -518,11 +580,11 @@ export default function UserInfoProfile() {
       </div>
 
       {/* Submit Button */}
-      <button onClick={getMyUserData} className="w-86 bg-blue-600 text-white py-2 mt-8 rounded-lg hover:bg-blue-700">
+      <button onClick={matchJobs} className="w-86 bg-blue-600 text-white py-2 mt-8 rounded-lg hover:bg-blue-700">
         Submit
       </button>
-      {loading && 
-      <p>Getting users Data...</p>
+      {matchingJobs && 
+      <p className="py-2">Matching best jobs for you...</p>
       }
     </div>
   );

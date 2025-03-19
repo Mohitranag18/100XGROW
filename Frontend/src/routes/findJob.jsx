@@ -1,7 +1,10 @@
 import JobTable from "../components/jobTable";
 import UserInfoForm from "../components/userInfoForm";
+import { useEffect, useState } from "react";
 
 function FindJob() {
+    const [bestJobs, setBestJobs] = useState([])
+
     return ( 
         <>
         <div className="min-h-screen  w-full text-[#ffffff] bg-[#030712]">
@@ -20,14 +23,14 @@ function FindJob() {
                    <p><strong>Note: </strong>By Default we are filling Information with your Profile Data, you can do changes in your data Manually as well.</p>
                 </div>
                 <div className="w-290">
-                <UserInfoForm />
+                <UserInfoForm bestJobs={bestJobs} setBestJobs={setBestJobs}/>
                 </div>
             </div>
 
             {/* panel 3 */}
             <div className="w-full flex flex-col justify-center items-center text-center gap-8 p-6 py-16 border-b-2 border-[#1e2939]">
                 <h2 className="text-4xl font-semibold">Best Job Fits for You</h2>
-                <JobTable />
+                <JobTable jobs={bestJobs}/>
                 <button className="font-semibold mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition">Auto Apply to All</button>
             </div>
         </div>

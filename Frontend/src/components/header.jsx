@@ -14,7 +14,7 @@ function Header() {
                 <p onClick={() => nav('/magicats')} className="font-semibold cursor-pointer">MagicATS</p>
                 <p onClick={() => nav('/findjob')} className="font-semibold cursor-pointer">FindJob</p>
                 <div onClick={() => nav('/profile')} className="h-8 w-8 rounded-full bg-[#292e3d] cursor-pointer overflow-hidden border-2 border-white">
-                    <img className="h-8 w-8 object-center object-cover" src="https://images.unsplash.com/photo-1662492953475-3aeae94525d9?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE2MXx8fGVufDB8fHx8fA%3D%3D" alt="profile pic" />
+                    <img className="h-8 w-8 object-center object-cover" src="http://127.0.0.1:8000/api/media/profile_images/profilepic_DYQ4v7n.jpg" alt="profile pic" />
                 </div>
             </div>
         </div>

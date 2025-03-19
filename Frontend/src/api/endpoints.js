@@ -177,3 +177,21 @@ export const update_my_user_data = async (dataToUpdate) => {
         return call_refresh(error, () => api.put(`${BASE_URL}user-complete-data/`, dataToUpdate , { withCredentials: true }));
     }
 };
+
+export const get_all_jobs = async () => {
+    try{
+        const response = await api.get(`${BASE_URL}jobs/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${BASE_URL}jobs/`, { withCredentials: true }));
+    }
+};
+
+export const match_jobs = async (user_data, job_postings) => {
+    try{
+        const response = await api.post(`${BASE_URL}match-jobs/`, { user_data, job_postings } , { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.post(`${BASE_URL}match-jobs/`, { user_data, job_postings } , { withCredentials: true }));
+    }
+};
