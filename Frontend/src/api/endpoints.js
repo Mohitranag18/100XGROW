@@ -195,3 +195,21 @@ export const match_jobs = async (user_data, job_postings) => {
         return call_refresh(error, () => api.post(`${BASE_URL}match-jobs/`, { user_data, job_postings } , { withCredentials: true }));
     }
 };
+
+export const create_applied_job = async (appliedJobData) => {
+    try{
+        const response = await api.post(`${BASE_URL}applied-jobs/create/`, appliedJobData, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.post(`${BASE_URL}applied-jobs/create/`, appliedJobData, { withCredentials: true }));
+    }
+};
+
+export const get_all_applied_jobs = async () => {
+    try{
+        const response = await api.get(`${BASE_URL}applied-jobs/`, { withCredentials: true });
+        return response.data;
+    }catch(error){
+        return call_refresh(error, () => api.get(`${BASE_URL}applied-jobs/`, { withCredentials: true }));
+    }
+};

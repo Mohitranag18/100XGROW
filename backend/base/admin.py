@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Note, MyUserData, Experience, Education, Project, Language
+from .models import Note, MyUserData, Experience, Education, Project, Language, AppliedJob
 from django.contrib.auth import get_user_model
 
 # Use get_user_model() instead of settings.AUTH_USER_MODEL
@@ -12,5 +12,7 @@ admin.site.register(Project)
 admin.site.register(Language)
 
 admin.site.register(Note)
+admin.site.register(AppliedJob)
+
 
 

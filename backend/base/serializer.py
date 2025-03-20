@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Note
-from .models import MyUser, MyUserData, Education, Experience, Project, Language
+from .models import MyUser, MyUserData, Education, Experience, Project, Language, AppliedJob
 
 
 class MyUserProfileSerializer(serializers.ModelSerializer):
@@ -90,3 +90,12 @@ class UserCompleteDataSerializer(serializers.ModelSerializer):
         self.delete_and_create_related_objects(Language, validated_data.get('languages', []), instance)
 
         return instance
+
+
+
+# Serializer
+class AppliedJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppliedJob
+        fields = '__all__'
+

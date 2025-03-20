@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { resume_detail } from '../api/endpoints';
 import { SERVER_URL } from '../api/endpoints'
+import { CiStar } from "react-icons/ci";
 
 function ReviewResumeDetails() {
     const location = useLocation();
@@ -42,20 +43,29 @@ function ReviewResumeDetails() {
   return (
     <div className="min-h-screen  w-full text-[#ffffff] bg-[#030712]">
             {/* panel 1 */}
-            <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-8 p-6 border-b-2 border-[#1e2939]">
+            {/* <div className="h-112 w-full flex flex-col justify-center items-center text-center gap-8 p-6 border-b-2 border-[#1e2939]">
                 <h1 className="text-5xl font-bold">Resumes {pk}</h1>
-            </div>
+            </div> */}
 
             {/* panel 2 */}
             <div className="w-full flex flex-col flex-wrap justify-center items-center text-center gap-8 p-6 py-16 border-b-2 border-[#1e2939]">
                 {loading && <p>Loading...</p>}
-                <div className='flex gap-8'>
-                  <h1>{username}</h1>
-                  <h1>{jobRole}</h1>
+                <div className='flex flex-col items-center gap-2'>
+                  <h1 className='text-lg'><strong className='font-bold'>Username: </strong>{username}</h1>
+                  <h1 className='text-lg'><strong className='font-bold'>Job Role: </strong>{jobRole}</h1>
                 </div>
                 <img className='h-124' src={`${SERVER_URL}${imageUrl}`} alt="Resume Image" />
-                <div className='flex items-center gap-8'>
-                  <p>Rating: {avgRating}</p>
+                <div className='flex items-center gap-24'>
+                  <div className='flex flex-col gap-1'>
+                    <div className='flex gap-1'>
+                    <CiStar className='font-bold text-2xl cursor-pointer'/>
+                    <CiStar className='font-bold text-2xl cursor-pointer'/>
+                    <CiStar className='font-bold text-2xl cursor-pointer'/>
+                    <CiStar className='font-bold text-2xl cursor-pointer'/>
+                    <CiStar className='font-bold text-2xl cursor-pointer'/>
+                    </div>
+                    <p className='text-md font-semibold'>Rating: {avgRating}</p>
+                  </div>
                   <a href={`${SERVER_URL}${pdfUrl}`}>
                     <button className='rounded-sm bg-blue-600 p-2 cursor-pointer'>Open PDF</button>
                   </a>

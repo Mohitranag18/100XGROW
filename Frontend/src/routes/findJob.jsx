@@ -30,7 +30,7 @@ function FindJob() {
             {/* panel 3 */}
             <div className="w-full flex flex-col justify-center items-center text-center gap-8 p-6 py-16 border-b-2 border-[#1e2939]">
                 <h2 className="text-4xl font-semibold">Best Job Fits for You</h2>
-                <JobTable jobs={bestJobs}/>
+                <JobTable jobs={bestJobs} />
                 <button className="font-semibold mt-6 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition">Auto Apply to All</button>
             </div>
         </div>

@@ -5,6 +5,7 @@ import { FaLinkedinIn } from "react-icons/fa";
 import { get_user_profile_info } from "../api/endpoints";
 import { SERVER_URL } from "../api/endpoints";
 import PostedResumeList from "../components/PostedResumeList";
+import AppliedJobTable from "../components/appliedJobTable";
 
 function UserProfile() {
     const profileModes = ['userInfo', 'resumes', 'applicationsTracker']
@@ -93,9 +94,21 @@ function UserProfile() {
                         </div>
                     </div>
                     {
-                        resumeMode === "postedResumes" &&
+                        resumeMode === "postedResumes" ?
                         <PostedResumeList username={username}/>
+                        :
+                        <div className="h-36 w-full flex flex-col justify-center items-center text-center gap-8 p-6">
+                            <h1 className="text-4xl font-bold">Your Posted Resumes</h1>
+                        </div>
                     }
+                </div>
+                }
+
+                {/* Application Tracker */}
+                {profileMode === 'applicationsTracker' &&
+                <div className="w-full">
+                    <h2 className="text-4xl font-semibold flex justify-center w-290">Applied Jobs Data</h2>
+                    <AppliedJobTable />
                 </div>
                 }
             </div>

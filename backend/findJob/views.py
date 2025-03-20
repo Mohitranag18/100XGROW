@@ -74,7 +74,7 @@ def call_gemini_api(user_data, job_postings):
     Analyze the following user's profile and job postings, and return the top matching jobs with a matching score (0-100%). 
     User Data: {json.dumps(user_data)} 
     Job Postings: {json.dumps(job_postings)}
-    Provide the response in JSON format with job_id, matching_score, and all job posting details.
+    There should be minimun 5 Jobs in response and Provide the response in JSON format with job_id, matching_score, and all job posting details.
     """
 
     model = genai.GenerativeModel("gemini-1.5-pro")  # Use Gemini-Pro model
