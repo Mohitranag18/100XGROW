@@ -15,7 +15,7 @@
 
 🔹 **Frontend** – React.js, Tailwind CSS  
 🔹 **Backend** – Django, Django REST Framework  
-🔹 **AI & ML** – TensorFlow, Hugging Face (NLP for ATS analysis) -> comming soon
+🔹 **AI & ML** – TensorFlow, Hugging Face (NLP for ATS analysis) -> comming soon  
 🔹 **Database** – SQLite  
 🔹 **APIs & Integrations** – LinkedIn API, Google Gemini API  
 
