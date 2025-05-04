@@ -15,10 +15,9 @@
 
 🔹 **Frontend** – React.js, Tailwind CSS  
 🔹 **Backend** – Django, Django REST Framework  
-🔹 **AI & ML** – TensorFlow, Hugging Face (NLP for ATS analysis)  
-🔹 **Database** – PostgreSQL  
+🔹 **AI & ML** – TensorFlow, Hugging Face (NLP for ATS analysis) -> comming soon  
+🔹 **Database** – SQLite  
 🔹 **APIs & Integrations** – LinkedIn API, Google Gemini API  
-🔹 **Cloud & Deployment** – AWS, Firebase  
 
 ## 🚀 Getting Started  
 
@@ -27,7 +26,7 @@
 Ensure you have the following installed:  
 - Node.js & npm (for frontend)  
 - Python & Django (for backend)  
-- PostgreSQL (for database)  
+- SQLite (for database)  
 
 ## Steps to Contribute
 
