@@ -6,6 +6,7 @@ import { get_user_profile_info } from "../api/endpoints";
 import { SERVER_URL } from "../api/endpoints";
 import PostedResumeList from "../components/PostedResumeList";
 import AppliedJobTable from "../components/appliedJobTable";
+import { useAuth } from "../context/useAuth";
 
 function UserProfile() {
     const profileModes = ['userInfo', 'resumes', 'applicationsTracker']
@@ -40,6 +41,12 @@ function UserProfile() {
     useEffect(()=>{
         getUserData()
     },[])
+
+    const { user, logoutUser } = useAuth();
+
+    const handleLogout = async () => {
+        await logoutUser();
+    };
 
     return (
         <div className="min-h-screen h-full w-full text-[#ffffff] bg-[#030712] border-b-2 border-[#1e2939] flex">
@@ -78,6 +85,13 @@ function UserProfile() {
                             <p className="text-gray-500">(Fill Your data Properly for Better Matches)</p>
                         </div>
                         <UserInfoProfile />
+                    </div>
+                    <div className="w-full flex justify-end p-8">
+                        <button
+                            onClick={handleLogout}
+                            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-200 mt-30">
+                            Logout
+                        </button>
                     </div>
                 </div>
                 }

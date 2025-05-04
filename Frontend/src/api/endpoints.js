@@ -81,12 +81,12 @@ export const register = async (username, email, password) => {
       throw error;
     }
   };
-  
 
 export const authenticated_user = async () => {
     try{
-        await axios.post(AUTHENTICATED_URL,{}, { withCredentials: true });
-        return true
+        const response = await axios.post(AUTHENTICATED_URL,{}, { withCredentials: true });
+        console.log(response)
+        return response.data.authenticated
     }catch(error){
         return false
     }
