@@ -10,7 +10,7 @@ import PrivateRoute from './components/private_route.jsx';
 import UserProfile from './routes/userProfile.jsx';
 import Home from './routes/home.jsx';
 import Header from './components/header.jsx';
-import BuildResume from './routes/buildresume.jsx';
+import BuildResume from './routes/buildResume.jsx';
 import RateMyResume from './routes/rateMyResume.jsx';
 import MagicATS from './routes/magicATS.jsx';
 import FindJob from './routes/findJob.jsx';

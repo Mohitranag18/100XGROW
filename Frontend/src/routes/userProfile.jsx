@@ -4,7 +4,7 @@ import { FaInstagram } from "react-icons/fa";
 import { FaLinkedinIn } from "react-icons/fa";
 import { get_user_profile_info } from "../api/endpoints";
 import { SERVER_URL } from "../api/endpoints";
-import PostedResumeList from "../components/PostedResumeList";
+import PostedResumeList from "../components/postedResumeList";
 import AppliedJobTable from "../components/appliedJobTable";
 import { useAuth } from "../context/useAuth";
 
