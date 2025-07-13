@@ -51,7 +51,7 @@ def analyze_resume_with_ai(resume_text):
     The extracted data should be returned in a well-formatted JSON object.
     """
 
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content(prompt)
 
     if not response or not response.text:

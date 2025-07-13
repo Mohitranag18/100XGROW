@@ -525,56 +525,56 @@ export default function UserInfoProfile({bestJobs, setBestJobs}) {
           )}
           
           {/* Work Preferences Section */}
-          <div className="flex justify-between items-center cursor-pointer" onClick={() => setWorkPrefVisible(!workPrefVisible)}>
-              <h3 className="text-xl font-semibold">Work Preferences</h3>
-              {workPrefVisible ? <FaChevronUp /> : <FaChevronDown />}
-          </div>
-          {workPrefVisible && (
-              <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-center cursor-pointer" onClick={() => setWorkPrefVisible(!workPrefVisible)}>
+                <h3 className="text-xl font-semibold">Work Preferences</h3>
+                {workPrefVisible ? <FaChevronUp /> : <FaChevronDown />}
+            </div>
+            {workPrefVisible && (
+                <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="remote_work">Remote Work:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.remote_work} className="bg-[#121826] text-white w-[30%]" name="remote_work" required>
+                    <label htmlFor="remote_work">Remote Work:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.remote_work} className="bg-[#121826] text-white w-[30%]" name="remote_work" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="in_person_work">In Person Work:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.in_person_work} className="bg-[#121826] text-white w-[30%]" name="in_person_work" required>
+                    <label htmlFor="in_person_work">In Person Work:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.in_person_work} className="bg-[#121826] text-white w-[30%]" name="in_person_work" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="open_to_relocation">Open To Relocation:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.open_to_relocation} className="bg-[#121826] text-white w-[30%]" name="open_to_relocation" required>
+                    <label htmlFor="open_to_relocation">Open To Relocation:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.open_to_relocation} className="bg-[#121826] text-white w-[30%]" name="open_to_relocation" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="willing_to_complete_assessments">Willing To Complete Assessments:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.willing_to_complete_assessments} className="bg-[#121826] text-white w-[30%]" name="willing_to_complete_assessments" required>
+                    <label htmlFor="willing_to_complete_assessments">Willing To Complete Assessments:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.willing_to_complete_assessments} className="bg-[#121826] text-white w-[30%]" name="willing_to_complete_assessments" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="willing_to_undergo_drug_tests">Willing To Undergo Drug Tests:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.willing_to_undergo_drug_tests} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_drug_tests" required>
+                    <label htmlFor="willing_to_undergo_drug_tests">Willing To Undergo Drug Tests:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.willing_to_undergo_drug_tests} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_drug_tests" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
                 <div className="flex justify-between gap-8 p-2 border border-gray-500 bg-[#121826] text-white rounded">
-                  <label htmlFor="willing_to_undergo_background_checks">Willing To Undergo Background Checks:</label>
-                  <select onChange={handleWorkPrefAdd} value={selfId.willing_to_undergo_background_checks} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_background_checks" required>
+                    <label htmlFor="willing_to_undergo_background_checks">Willing To Undergo Background Checks:</label>
+                    <select onChange={handleWorkPrefAdd} value={workPref.willing_to_undergo_background_checks} className="bg-[#121826] text-white w-[30%]" name="willing_to_undergo_background_checks" required>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
-                  </select>
+                    </select>
                 </div>
-              </div>
-          )}
+                </div>
+            )}
 
         </form>
       </div>

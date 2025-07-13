@@ -5,6 +5,15 @@ import { useState } from "react";
 export default function JobTable({ jobs }) {
   const [addingToApplied, setAddingToApplied] = useState(false);
 
+  // Handle undefined or non-array `jobs`
+  if (!Array.isArray(jobs)) {
+    return (
+      <div className="text-center text-white p-4">
+        <p>Loading jobs or no jobs found.</p>
+      </div>
+    );
+  }
+
   const createAppliedJob = async (job) => {
     setAddingToApplied(true);
     const appliedJobData = {
@@ -51,7 +60,7 @@ export default function JobTable({ jobs }) {
           </tr>
         </thead>
         <tbody>
-          {jobs.map((job) => (
+          {(jobs || []).map((job) => (
             <tr key={job.id} className="text-center border border-gray-700 hover:bg-gray-900">
               <td className="border border-gray-700 p-2">{job.title}</td>
               <td className="border border-gray-700 p-2">{job.company}</td>
@@ -61,7 +70,9 @@ export default function JobTable({ jobs }) {
               <td className="border border-gray-700 p-2">{job.matching_score}%</td>
               <td className="border border-gray-700 p-2">
                 <a href={job.job_url} target="_blank" rel="noopener noreferrer">
-                  <button className="bg-gray-700 px-3 py-1 rounded-lg hover:bg-blue-600 cursor-pointer">Apply Now</button>
+                  <button className="bg-gray-700 px-3 py-1 rounded-lg hover:bg-blue-600 cursor-pointer">
+                    Apply Now
+                  </button>
                 </a>
               </td>
               <td className="border border-gray-700 p-2">
@@ -78,11 +89,12 @@ export default function JobTable({ jobs }) {
           ))}
         </tbody>
       </table>
-      {jobs.length === 0 &&
-          <div className="h-86 w-full flex justify-center items-center text-center">
-            <p>No jobs Available Currently, submit your Data to find jobs</p>
-          </div>
-        }
+
+      {jobs.length === 0 && (
+        <div className="h-86 w-full flex justify-center items-center text-center mt-4">
+          <p>No jobs available currently, submit your data to find jobs.</p>
+        </div>
+      )}
     </div>
   );
 }

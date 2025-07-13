@@ -213,3 +213,22 @@ export const get_all_applied_jobs = async () => {
         return call_refresh(error, () => api.get(`${BASE_URL}applied-jobs/`, { withCredentials: true }));
     }
 };
+
+
+export const update_applied_job = async (jobId, data) => {
+  try {
+    const response = await api.patch(`${BASE_URL}applied-jobs/${jobId}/update/`, data, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return call_refresh(error, () => api.patch(`${BASE_URL}applied-jobs/${jobId}/update/`, data, { withCredentials: true }));
+  }
+};
+
+export const delete_applied_job = async (jobId) => {
+  try {
+    const response = await api.delete(`${BASE_URL}applied-jobs/${jobId}/delete/`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    return call_refresh(error, () => api.delete(`${BASE_URL}applied-jobs/${jobId}/delete/`, { withCredentials: true }));
+  }
+};

@@ -1,5 +1,6 @@
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { get_all_applied_jobs } from "../api/endpoints";
+import { MdDelete } from "react-icons/md";
+import { get_all_applied_jobs, update_applied_job, delete_applied_job } from "../api/endpoints";
 import { useEffect, useState } from "react";
 
 const STATUS_CHOICES = [
@@ -9,6 +10,8 @@ const STATUS_CHOICES = [
 export default function AppliedJobTable() {
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [gettingJobs, setGettingJobs] = useState(false);
+  const [updatingJobs, setUpdatingJobs] = useState({}); // Track which jobs are being updated
+  const [deletingJobs, setDeletingJobs] = useState({}); // Track which jobs are being deleted
 
   const getAppliedJobs = async () => {
     setGettingJobs(true);
@@ -24,11 +27,70 @@ export default function AppliedJobTable() {
   };
 
   const handleStatusChange = async (jobId, newStatus) => {
+    // Store the original status for potential revert
+    const originalJob = appliedJobs.find(job => job.id === jobId);
+    const originalStatus = originalJob?.status;
+    
+    // Set loading state for this specific job
+    setUpdatingJobs(prev => ({ ...prev, [jobId]: true }));
+    
+    // Optimistically update the UI
     const updatedJobs = appliedJobs.map(job =>
       job.id === jobId ? { ...job, status: newStatus } : job
     );
     setAppliedJobs(updatedJobs);
-    console.log(`Job ID ${jobId} status changed to ${newStatus}`);
+
+    try {
+      // Call the API to update the job status
+      await update_applied_job(jobId, { status: newStatus });
+      console.log(`Job ID ${jobId} status successfully updated to ${newStatus}`);
+    } catch (error) {
+      console.error('Error updating job status:', error);
+      
+      // Revert the optimistic update on error
+      const revertedJobs = appliedJobs.map(job =>
+        job.id === jobId ? { ...job, status: originalStatus } : job
+      );
+      setAppliedJobs(revertedJobs);
+      
+      // Show error message
+      alert(`Failed to update job status. Please try again.`);
+    } finally {
+      // Remove loading state for this job
+      setUpdatingJobs(prev => {
+        const newState = { ...prev };
+        delete newState[jobId];
+        return newState;
+      });
+    }
+  };
+
+  const handleDeleteJob = async (jobId) => {
+    // Show confirmation dialog
+    const confirmDelete = window.confirm("Are you sure you want to delete this job application?");
+    if (!confirmDelete) return;
+
+    // Set loading state for this specific job
+    setDeletingJobs(prev => ({ ...prev, [jobId]: true }));
+
+    try {
+      // Call the API to delete the job
+      await delete_applied_job(jobId);
+      console.log(`Job ID ${jobId} successfully deleted`);
+      
+      // Remove the job from the state
+      setAppliedJobs(prev => prev.filter(job => job.id !== jobId));
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      alert(`Failed to delete job. Please try again.`);
+    } finally {
+      // Remove loading state for this job
+      setDeletingJobs(prev => {
+        const newState = { ...prev };
+        delete newState[jobId];
+        return newState;
+      });
+    }
   };
 
   useEffect(() => {
@@ -51,12 +113,13 @@ export default function AppliedJobTable() {
               <th className="border border-gray-700 p-2">Match Score</th>
               <th className="border border-gray-700 p-2">Link</th>
               <th className="border border-gray-700 p-2">Status</th>
+              <th className="border border-gray-700 p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {appliedJobs.length === 0 ? (
               <tr>
-                <td colSpan="8" className="p-4 text-center">No applied jobs found.</td>
+                <td colSpan="9" className="p-4 text-center">No applied jobs found.</td>
               </tr>
             ) : (
               appliedJobs.map((job) => (
@@ -76,12 +139,41 @@ export default function AppliedJobTable() {
                     <select
                       value={job.status}
                       onChange={(e) => handleStatusChange(job.id, e.target.value)}
-                      className="bg-gray-700 text-white p-2 rounded-lg"
+                      disabled={updatingJobs[job.id]} // Disable while updating
+                      className={`bg-gray-700 text-white p-2 rounded-lg ${
+                        updatingJobs[job.id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
                     >
                       {STATUS_CHOICES.map((status) => (
-                        <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>
+                        <option key={status} value={status}>
+                          {status.charAt(0).toUpperCase() + status.slice(1)}
+                        </option>
                       ))}
                     </select>
+                    {updatingJobs[job.id] && (
+                      <div className="mt-1 text-xs text-gray-400">Updating...</div>
+                    )}
+                  </td>
+                  <td className="border border-gray-700 p-2">
+                    <button
+                      onClick={() => handleDeleteJob(job.id)}
+                      disabled={deletingJobs[job.id] || updatingJobs[job.id]}
+                      className={`p-2 rounded-lg transition-colors ${
+                        deletingJobs[job.id] || updatingJobs[job.id]
+                          ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                          : 'bg-red-600 hover:bg-red-700 cursor-pointer'
+                      }`}
+                      title="Delete job"
+                    >
+                      {deletingJobs[job.id] ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <MdDelete className="w-4 h-4 text-white" />
+                      )}
+                    </button>
+                    {deletingJobs[job.id] && (
+                      <div className="mt-1 text-xs text-gray-400">Deleting...</div>
+                    )}
                   </td>
                 </tr>
               ))
